@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { EditProfileDialog } from "@/components/layout/edit-profile-dialog";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { signOutAction } from "@/lib/actions/auth";
 import { ROLE_LABELS } from "@/lib/constants";
 import type { Profile, UserRole } from "@/lib/types/database";
@@ -58,6 +59,7 @@ export function Topbar({ profile, role, alertCount }: { profile: Profile | null;
       </form>
 
       <div className="flex flex-1 justify-end items-center gap-2">
+        <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative" asChild>
           <a href="/alerts">
             <BellRing className="size-5" />

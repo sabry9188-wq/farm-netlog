@@ -144,6 +144,44 @@
   --aqua-400: oklch(0.78 0.12 200);
 }
 
+/* Dark mode — content surfaces only. The sidebar keeps its brand blue
+   and the login/dashboard hero photo overlays keep their fixed navy
+   tokens in both modes, since those are brand elements, not theme. */
+.dark {
+  --background: oklch(0.16 0.022 250);
+  --foreground: oklch(0.94 0.01 240);
+  --card: oklch(0.205 0.025 250);
+  --card-foreground: oklch(0.94 0.01 240);
+  --popover: oklch(0.205 0.025 250);
+  --popover-foreground: oklch(0.94 0.01 240);
+  --primary: oklch(0.72 0.13 205);
+  --primary-foreground: oklch(0.15 0.03 240);
+  --secondary: oklch(0.26 0.03 250);
+  --secondary-foreground: oklch(0.94 0.01 240);
+  --muted: oklch(0.24 0.025 250);
+  --muted-foreground: oklch(0.66 0.02 240);
+  --accent: oklch(0.3 0.05 250);
+  --accent-foreground: oklch(0.94 0.01 240);
+  --destructive: oklch(0.62 0.2 25);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.13 205);
+  --chart-1: oklch(0.62 0.1 255);
+  --chart-2: oklch(0.68 0.13 215);
+  --chart-3: oklch(0.78 0.13 195);
+  --chart-4: oklch(0.72 0.15 150);
+  --chart-5: oklch(0.78 0.16 75);
+
+  --status-green-bg: oklch(0.28 0.06 150);
+  --status-blue-bg: oklch(0.28 0.07 250);
+  --status-yellow-bg: oklch(0.3 0.07 95);
+  --status-yellow-foreground: oklch(0.92 0.03 95);
+  --status-orange-bg: oklch(0.3 0.08 60);
+  --status-red-bg: oklch(0.3 0.09 25);
+  --status-purple-bg: oklch(0.28 0.07 300);
+  --status-grey-bg: oklch(0.28 0.01 250);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
