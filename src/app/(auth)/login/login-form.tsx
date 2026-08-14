@@ -25,7 +25,7 @@ export function LoginForm() {
       {state?.error && (
         <p className="rounded-md bg-status-red-bg px-3 py-2 text-sm text-status-red">{state.error}</p>
       )}
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button type="submit" className="w-full rounded-full" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
         Sign in
       </Button>
