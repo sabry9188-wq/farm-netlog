@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, Search, BellRing, LogOut, User } from "lucide-react";
+import { Menu, Search, BellRing, LogOut, User, UserCog } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,12 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { EditProfileDialog } from "@/components/layout/edit-profile-dialog";
 import { signOutAction } from "@/lib/actions/auth";
 import { ROLE_LABELS } from "@/lib/constants";
 import type { Profile, UserRole } from "@/lib/types/database";
 
 export function Topbar({ profile, role, alertCount }: { profile: Profile | null; role: UserRole; alertCount: number }) {
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const router = useRouter();
 
   function handleSearch(e: React.FormEvent<HTMLFormElement>) {
@@ -70,9 +72,14 @@ export function Topbar({ profile, role, alertCount }: { profile: Profile | null;
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2 px-2">
-              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                {initials}
-              </span>
+              {profile?.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={profile.avatar_url} alt="" className="size-8 rounded-full object-cover ring-1 ring-border" />
+              ) : (
+                <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  {initials}
+                </span>
+              )}
               <span className="hidden text-left leading-tight md:block">
                 <span className="block text-sm font-semibold">{profile?.full_name ?? "User"}</span>
                 <span className="block text-[11px] text-muted-foreground">{ROLE_LABELS[role]}</span>
@@ -86,6 +93,10 @@ export function Topbar({ profile, role, alertCount }: { profile: Profile | null;
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setEditOpen(true)}>
+              <UserCog className="size-4" /> Edit profile
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <form action={signOutAction}>
               <DropdownMenuItem asChild>
                 <button type="submit" className="w-full text-left text-status-red">
@@ -96,6 +107,8 @@ export function Topbar({ profile, role, alertCount }: { profile: Profile | null;
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {profile && <EditProfileDialog profile={profile} open={editOpen} onOpenChange={setEditOpen} />}
     </header>
   );
 }

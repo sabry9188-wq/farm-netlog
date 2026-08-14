@@ -103,14 +103,14 @@
   --chart-5: oklch(0.75 0.16 75);
   --radius: 0.75rem;
 
-  /* Sidebar: deep navy, independent of light/dark content theme */
-  --sidebar: oklch(0.19 0.045 250);
-  --sidebar-foreground: oklch(0.92 0.015 235);
-  --sidebar-primary: oklch(0.75 0.13 210);
-  --sidebar-primary-foreground: oklch(0.15 0.03 240);
-  --sidebar-accent: oklch(0.26 0.05 250);
-  --sidebar-accent-foreground: oklch(0.98 0.005 240);
-  --sidebar-border: oklch(1 0 0 / 8%);
+  /* Sidebar: bright royal blue, independent of light/dark content theme */
+  --sidebar: #0b5fc2;
+  --sidebar-foreground: #eaf3ff;
+  --sidebar-primary: oklch(0.78 0.12 200);
+  --sidebar-primary-foreground: #0b3a75;
+  --sidebar-accent: #1569d4;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: oklch(1 0 0 / 15%);
   --sidebar-ring: oklch(0.75 0.13 210);
 
   /* Status colors - consistent everywhere */

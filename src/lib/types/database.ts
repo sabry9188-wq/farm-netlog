@@ -15,6 +15,7 @@ export interface Profile {
   role: UserRole;
   status: UserStatus;
   can_approve_disposal: boolean;
+  avatar_url: string | null;
   created_at: string;
 }
 
