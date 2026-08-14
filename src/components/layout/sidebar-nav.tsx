@@ -19,8 +19,8 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
           <Waves className="size-5" />
         </div>
         <div>
-          <p className="text-base font-bold tracking-tight text-white">NetLog</p>
-          <p className="text-[11px] text-sidebar-foreground/60">Cage Farm Net Management</p>
+          <p className="text-base font-extrabold tracking-tight text-white">NetLog</p>
+          <p className="text-[11px] font-medium text-white/80">Cage Farm Net Management</p>
         </div>
       </div>
 
@@ -33,13 +33,11 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold tracking-tight text-white transition-colors",
+                active ? "bg-sidebar-accent shadow-sm" : "hover:bg-sidebar-accent/60",
               )}
             >
-              <NavIcon name={item.icon} className={cn("size-4.5 shrink-0", active && "text-sidebar-primary")} />
+              <NavIcon name={item.icon} className="size-4.5 shrink-0 text-white" />
               <span className="truncate">{item.label}</span>
             </Link>
           );
@@ -47,8 +45,8 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
       </nav>
 
       <div className="border-t border-sidebar-border px-5 py-4">
-        <p className="text-[11px] text-sidebar-foreground/50">Station-05 · 20 cages</p>
-        <p className="text-[11px] text-sidebar-foreground/50">Offshore · 24 cages</p>
+        <p className="text-[11px] font-semibold text-white/70">Station-05 · 20 cages</p>
+        <p className="text-[11px] font-semibold text-white/70">Offshore · 24 cages</p>
       </div>
     </div>
   );
