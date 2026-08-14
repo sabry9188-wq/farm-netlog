@@ -18,6 +18,32 @@ async function requireAdmin() {
   return { ok: true as const, supabase };
 }
 
+export async function createUserWithPasswordAction(input: {
+  email: string;
+  fullName: string;
+  role: UserRole;
+  password: string;
+}) {
+  const check = await requireAdmin();
+  if (!check.ok) return { error: check.error };
+
+  const admin = createAdminClient();
+  const { data, error } = await admin.auth.admin.createUser({
+    email: input.email,
+    password: input.password,
+    email_confirm: true,
+    user_metadata: { full_name: input.fullName },
+  });
+  if (error) return { error: error.message };
+
+  if (data.user) {
+    await admin.from("profiles").update({ full_name: input.fullName, role: input.role }).eq("id", data.user.id);
+  }
+
+  revalidatePath("/users");
+  return { data: true };
+}
+
 export async function inviteUserAction(input: { email: string; fullName: string; role: UserRole }) {
   const check = await requireAdmin();
   if (!check.ok) return { error: check.error };
