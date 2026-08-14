@@ -59,15 +59,16 @@ export default async function DashboardPage() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ocean-950/85 via-ocean-950/75 to-ocean-950/90" />
+        {/* Light shading only behind the title/button — the rest of the photo, and the area behind the KPI cards, stays bright */}
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
         <div className="relative z-10 p-5 sm:p-8">
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Farm Dashboard</h1>
-              <p className="mt-1 text-sm text-white/70">Where is every net in the farm right now?</p>
+              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl [text-shadow:_0_1px_6px_rgb(0_0_0_/_60%)]">Farm Dashboard</h1>
+              <p className="mt-1 text-sm text-white/90 [text-shadow:_0_1px_4px_rgb(0_0_0_/_60%)]">Where is every net in the farm right now?</p>
             </div>
-            <Button asChild variant="secondary" className="w-fit bg-white/10 text-white hover:bg-white/20">
+            <Button asChild variant="secondary" className="w-fit bg-white/15 text-white backdrop-blur-sm hover:bg-white/25">
               <Link href="/cages">
                 <Building2 className="size-4" /> View Cage Map
               </Link>
