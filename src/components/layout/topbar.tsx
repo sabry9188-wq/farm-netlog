@@ -51,7 +51,7 @@ export function Topbar({ profile, role, alertCount }: { profile: Profile | null;
       <form onSubmit={handleSearch} className="hidden flex-1 max-w-md sm:block">
         <div className="relative">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input name="q" placeholder="Search Net ID, Cage ID, mesh size…" className="pl-9" />
+          <Input name="q" placeholder="Search Net ID, Cage ID, mesh size…" className="pl-9" suppressHydrationWarning />
         </div>
       </form>
 
