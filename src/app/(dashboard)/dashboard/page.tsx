@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Waves,
   Anchor,
@@ -14,7 +15,6 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardData } from "@/lib/queries/dashboard";
-import { PageHeader } from "@/components/shared/page-header";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { AlertBadge } from "@/components/shared/alert-badge";
 import { StatusChart } from "@/components/dashboard/status-chart";
@@ -50,29 +50,43 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Farm Dashboard"
-        description="Where is every net in the farm right now?"
-        actions={
-          <Button asChild variant="outline">
-            <Link href="/cages">
-              <Building2 className="size-4" /> View Cage Map
-            </Link>
-          </Button>
-        }
-      />
+      <div className="relative mb-6 overflow-hidden rounded-2xl">
+        <Image
+          src="/farm-hero.jpg"
+          alt="Station-05 cage farm"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-ocean-950/85 via-ocean-950/75 to-ocean-950/90" />
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <KpiCard label="Total Nets" value={totals.totalNets} icon={Waves} accent="ocean" href="/nets" />
-        <KpiCard label="Installed" value={totals.installed} icon={Anchor} accent="ocean" href="/nets?status=Installed+in+Cage" />
-        <KpiCard label="In Store" value={totals.inStore} icon={Package} accent="green" href="/store" />
-        <KpiCard label="Cleaning" value={totals.cleaning} icon={Sparkles} accent="purple" href="/cleaning" />
-        <KpiCard label="Repair" value={totals.repair} icon={Wrench} accent="orange" href="/repair" />
-        <KpiCard label="Damaged" value={totals.damaged} icon={AlertOctagon} accent="red" href="/nets?status=Damaged" />
-        <KpiCard label="Lost" value={totals.lost} icon={Ghost} accent="grey" href="/nets?status=Lost" />
-        <KpiCard label="Disposed" value={totals.disposed} icon={Trash2} accent="grey" href="/nets?status=Disposed" />
-        <KpiCard label="Due Soon (14d)" value={totals.dueSoon14} icon={Clock} accent="orange" href="/alerts" />
-        <KpiCard label="Overdue" value={totals.overdue} icon={AlertOctagon} accent="red" href="/alerts" />
+        <div className="relative z-10 p-5 sm:p-8">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Farm Dashboard</h1>
+              <p className="mt-1 text-sm text-white/70">Where is every net in the farm right now?</p>
+            </div>
+            <Button asChild variant="secondary" className="w-fit bg-white/10 text-white hover:bg-white/20">
+              <Link href="/cages">
+                <Building2 className="size-4" /> View Cage Map
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <KpiCard label="Total Nets" value={totals.totalNets} icon={Waves} accent="ocean" href="/nets" />
+            <KpiCard label="Installed" value={totals.installed} icon={Anchor} accent="ocean" href="/nets?status=Installed+in+Cage" />
+            <KpiCard label="In Store" value={totals.inStore} icon={Package} accent="green" href="/store" />
+            <KpiCard label="Cleaning" value={totals.cleaning} icon={Sparkles} accent="purple" href="/cleaning" />
+            <KpiCard label="Repair" value={totals.repair} icon={Wrench} accent="orange" href="/repair" />
+            <KpiCard label="Damaged" value={totals.damaged} icon={AlertOctagon} accent="red" href="/nets?status=Damaged" />
+            <KpiCard label="Lost" value={totals.lost} icon={Ghost} accent="grey" href="/nets?status=Lost" />
+            <KpiCard label="Disposed" value={totals.disposed} icon={Trash2} accent="grey" href="/nets?status=Disposed" />
+            <KpiCard label="Due Soon (14d)" value={totals.dueSoon14} icon={Clock} accent="orange" href="/alerts" />
+            <KpiCard label="Overdue" value={totals.overdue} icon={AlertOctagon} accent="red" href="/alerts" />
+          </div>
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
