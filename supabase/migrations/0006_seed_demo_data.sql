@@ -39,15 +39,15 @@ begin
     current_cage_id, remarks, is_demo
   ) values (
     p_category, p_site_id, p_mesh, 'HDPE knotless', 'AquaNet Manufacturing', 'AquaNet Manufacturing',
-    current_date - (p_purchase_days_ago || ' days')::interval, 1200, false, p_condition,
+    current_date - p_purchase_days_ago, 1200, false, p_condition,
     'Installed in Cage', p_cage_code, v_cage_id, '[DEMO DATA]', true
   ) returning id into v_net_id;
 
   insert into net_installations (net_id, cage_id, installation_date, expected_change_date, condition_at_installation, remarks)
   values (
     v_net_id, v_cage_id,
-    current_date - (p_days_ago || ' days')::interval,
-    current_date - (p_days_ago || ' days')::interval + v_period,
+    current_date - p_days_ago,
+    current_date - p_days_ago + v_period,
     p_condition, '[DEMO DATA]'
   );
 
@@ -230,11 +230,11 @@ end $$;
 -- ---------------------------------------------------------------------
 
 insert into stock_thresholds (site_id, category, mesh_size, minimum_qty)
-select id, 'MAIN_NET', '6 mm', 3 from sites where site_code = 'ST05'
+select id, 'MAIN_NET'::net_category, '6 mm', 3 from sites where site_code = 'ST05'
 union all
-select id, 'MAIN_NET', '10 mm', 4 from sites where site_code = 'ST05'
+select id, 'MAIN_NET'::net_category, '10 mm', 4 from sites where site_code = 'ST05'
 union all
-select id, 'MAIN_NET', '10 mm', 3 from sites where site_code = 'OFFS'
+select id, 'MAIN_NET'::net_category, '10 mm', 3 from sites where site_code = 'OFFS'
 on conflict (site_id, category, mesh_size) do nothing;
 
 -- ---------------------------------------------------------------------
