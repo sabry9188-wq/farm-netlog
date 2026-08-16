@@ -30,6 +30,21 @@ export const DESTINATION_OPTIONS = [
 
 export const AVAILABLE_STATUSES = ["Available in Store", "Ready for Use", "Ready After Repair"] as const;
 
+export const REMOVAL_REASONS = [
+  "Scheduled 60-day change",
+  "Harvest",
+  "Cleaning",
+  "Repair",
+  "Damaged",
+  "Fish size change",
+  "Mesh size change",
+  "Cage maintenance",
+  "Emergency replacement",
+  "Other",
+] as const;
+
+export const CONDITIONS = ["New", "Excellent", "Good", "Fair", "Poor", "Damaged", "Requires Repair", "Beyond Repair"] as const;
+
 export const SITE_SLUGS: Record<string, string> = { ST05: "station-05", OFFS: "offshore" };
 export const SITE_CODES_BY_SLUG: Record<string, string> = { "station-05": "ST05", offshore: "OFFS" };
 

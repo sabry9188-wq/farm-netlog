@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Bookmark, BookmarkX, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InstallToCageDialog } from "@/components/nets/install-to-cage-dialog";
+import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
 import { SendCleaningDialog } from "@/components/nets/send-cleaning-dialog";
 import { CompleteCleaningDialog } from "@/components/nets/complete-cleaning-dialog";
 import { SendRepairDialog } from "@/components/nets/send-repair-dialog";
@@ -38,6 +39,17 @@ export function NetActionsBar({ net, role, cageCode }: { net: Net; role: UserRol
   const buttons: React.ReactNode[] = [];
 
   if (net.status === "Installed in Cage" && cageCode) {
+    buttons.push(
+      <ChangeNetDialog
+        key="change"
+        oldNetId={net.id}
+        oldNetCode={net.net_code}
+        cageCode={cageCode}
+        siteId={net.site_id}
+        category={net.category}
+        small
+      />,
+    );
     buttons.push(<RemoveNetDialog key="remove" netId={net.id} netCode={net.net_code} cageCode={cageCode} />);
   }
 

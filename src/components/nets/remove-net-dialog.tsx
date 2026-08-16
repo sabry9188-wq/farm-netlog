@@ -18,21 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { removeNetAction } from "@/lib/actions/nets";
-import { DESTINATION_OPTIONS } from "@/lib/constants";
-
-const REMOVAL_REASONS = [
-  "Scheduled 60-day change",
-  "Cleaning",
-  "Repair",
-  "Damaged",
-  "Fish size change",
-  "Mesh size change",
-  "Cage maintenance",
-  "Emergency replacement",
-  "Other",
-];
-
-const CONDITIONS = ["New", "Excellent", "Good", "Fair", "Poor", "Damaged", "Requires Repair", "Beyond Repair"];
+import { DESTINATION_OPTIONS, REMOVAL_REASONS, CONDITIONS } from "@/lib/constants";
 
 export function RemoveNetDialog({ netId, netCode, cageCode }: { netId: string; netCode: string; cageCode: string }) {
   const [open, setOpen] = useState(false);
@@ -63,15 +49,18 @@ export function RemoveNetDialog({ netId, netCode, cageCode }: { netId: string; n
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="border-status-orange/40 text-status-orange hover:bg-status-orange-bg">
+        <Button size="sm" variant="outline" className="border-status-red/40 text-status-red hover:bg-status-red-bg">
           <MinusCircle className="size-4" />
-          Remove / Change
+          Remove
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Remove {netCode} — {cageCode}</DialogTitle>
-          <DialogDescription>Record why this net is coming out and where it's going next.</DialogDescription>
+          <DialogDescription>
+            Takes the net out without installing a replacement — for a harvest, disposal, or sending it off for
+            cleaning/repair. To swap it for a different net right away, use "Change Net" instead.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

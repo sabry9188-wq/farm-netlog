@@ -78,6 +78,26 @@ export async function removeNetAction(input: {
   return res;
 }
 
+export async function changeNetAction(input: {
+  oldNetId: string;
+  newNetId: string;
+  removalReason: string;
+  conditionAtRemoval?: string;
+  changeDate?: string;
+  remarks?: string;
+}): Promise<ActionResult> {
+  const res = await callRpc("fn_change_net", {
+    p_old_net_id: input.oldNetId,
+    p_new_net_id: input.newNetId,
+    p_removal_reason: input.removalReason,
+    p_condition_at_removal: input.conditionAtRemoval ?? null,
+    p_change_date: input.changeDate ?? new Date().toISOString().slice(0, 10),
+    p_remarks: input.remarks ?? null,
+  });
+  revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/movements", "/install"]);
+  return res;
+}
+
 export async function sendToCleaningAction(input: {
   netId: string;
   startDate?: string;

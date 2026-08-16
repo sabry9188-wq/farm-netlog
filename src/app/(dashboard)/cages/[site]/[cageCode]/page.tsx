@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { InstallNetDialog } from "@/components/nets/install-net-dialog";
+import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
 import { RemoveNetDialog } from "@/components/nets/remove-net-dialog";
 import { formatDate, daysBetween } from "@/lib/calculations";
 import { SITE_CODES_BY_SLUG } from "@/lib/constants";
@@ -64,7 +65,17 @@ export default async function CageDetailPage({
             <CardTitle className="text-base">Current Main Net</CardTitle>
             {writable &&
               (cage.main_net_id ? (
-                <RemoveNetDialog netId={cage.main_net_id} netCode={cage.main_net_code!} cageCode={cage.cage_code} />
+                <div className="flex gap-2">
+                  <ChangeNetDialog
+                    oldNetId={cage.main_net_id}
+                    oldNetCode={cage.main_net_code!}
+                    cageCode={cage.cage_code}
+                    siteId={cage.site_id}
+                    category="MAIN_NET"
+                    small
+                  />
+                  <RemoveNetDialog netId={cage.main_net_id} netCode={cage.main_net_code!} cageCode={cage.cage_code} />
+                </div>
               ) : (
                 <InstallNetDialog cageId={cageRow.id} cageCode={cage.cage_code} siteId={cage.site_id} category="MAIN_NET" />
               ))}
@@ -103,7 +114,17 @@ export default async function CageDetailPage({
             <CardTitle className="text-base">Current Guard Net</CardTitle>
             {writable &&
               (cage.guard_net_id ? (
-                <RemoveNetDialog netId={cage.guard_net_id} netCode={cage.guard_net_code!} cageCode={cage.cage_code} />
+                <div className="flex gap-2">
+                  <ChangeNetDialog
+                    oldNetId={cage.guard_net_id}
+                    oldNetCode={cage.guard_net_code!}
+                    cageCode={cage.cage_code}
+                    siteId={cage.site_id}
+                    category="GUARD_NET"
+                    small
+                  />
+                  <RemoveNetDialog netId={cage.guard_net_id} netCode={cage.guard_net_code!} cageCode={cage.cage_code} />
+                </div>
               ) : (
                 <InstallNetDialog cageId={cageRow.id} cageCode={cage.cage_code} siteId={cage.site_id} category="GUARD_NET" triggerLabel="Install" />
               ))}
@@ -127,7 +148,17 @@ export default async function CageDetailPage({
             <CardTitle className="text-base">Current Top / Bird Net</CardTitle>
             {writable &&
               (cage.top_net_id ? (
-                <RemoveNetDialog netId={cage.top_net_id} netCode={cage.top_net_code!} cageCode={cage.cage_code} />
+                <div className="flex gap-2">
+                  <ChangeNetDialog
+                    oldNetId={cage.top_net_id}
+                    oldNetCode={cage.top_net_code!}
+                    cageCode={cage.cage_code}
+                    siteId={cage.site_id}
+                    category="TOP_NET"
+                    small
+                  />
+                  <RemoveNetDialog netId={cage.top_net_id} netCode={cage.top_net_code!} cageCode={cage.cage_code} />
+                </div>
               ) : (
                 <InstallNetDialog cageId={cageRow.id} cageCode={cage.cage_code} siteId={cage.site_id} category="TOP_NET" triggerLabel="Install" />
               ))}

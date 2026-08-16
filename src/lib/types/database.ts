@@ -240,6 +240,8 @@ export interface VCageCurrentState {
   top_net_code: string | null;
   top_net_condition: string | null;
   cage_status_color: CageStatusColor;
+  guard_net_installation_date: string | null;
+  top_net_installation_date: string | null;
 }
 
 export interface VStockSummary {
