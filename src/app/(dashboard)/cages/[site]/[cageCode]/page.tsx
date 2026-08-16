@@ -131,11 +131,24 @@ export default async function CageDetailPage({
           </CardHeader>
           <CardContent>
             {cage.guard_net_id ? (
-              <div className="space-y-2">
-                <Link href={`/nets/${cage.guard_net_code}`} className="font-mono text-base font-bold text-primary hover:underline">
-                  {cage.guard_net_code}
-                </Link>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link href={`/nets/${cage.guard_net_code}`} className="font-mono text-base font-bold text-primary hover:underline">
+                    {cage.guard_net_code}
+                  </Link>
+                  {cage.guard_net_days_remaining !== null && <AlertBadge daysRemaining={cage.guard_net_days_remaining} />}
+                </div>
                 <InfoRow label="Condition" value={cage.guard_net_condition ?? "—"} />
+                {cage.guard_net_expected_change_date && (
+                  <InfoRow label="Next change" value={formatDate(cage.guard_net_expected_change_date)} />
+                )}
+                {cage.guard_net_installation_date && (
+                  <NetProgress
+                    daysInWater={daysBetween(cage.guard_net_installation_date, new Date())}
+                    periodDays={120}
+                    color={cage.guard_net_alert_color ?? "green"}
+                  />
+                )}
               </div>
             ) : (
               <p className="py-4 text-center text-sm text-muted-foreground">No guard net assigned.</p>
@@ -170,6 +183,7 @@ export default async function CageDetailPage({
                   {cage.top_net_code}
                 </Link>
                 <InfoRow label="Condition" value={cage.top_net_condition ?? "—"} />
+                <p className="text-xs text-muted-foreground italic">No fixed schedule — changed only if damaged (holes, tears).</p>
               </div>
             ) : (
               <p className="py-4 text-center text-sm text-muted-foreground">No top/bird net assigned.</p>

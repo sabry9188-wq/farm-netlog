@@ -93,7 +93,10 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
               <>
                 <Row label="Cage" value={openInstallation.cages?.cage_code ?? "—"} />
                 <Row label="Installed" value={formatDate(openInstallation.installation_date)} />
-                <Row label="Next change due" value={formatDate(openInstallation.expected_change_date)} />
+                <Row
+                  label="Next change due"
+                  value={openInstallation.expected_change_date ? formatDate(openInstallation.expected_change_date) : "No fixed schedule — condition-based"}
+                />
                 <Row label="Days in water" value={daysBetween(openInstallation.installation_date, new Date())} />
               </>
             )}

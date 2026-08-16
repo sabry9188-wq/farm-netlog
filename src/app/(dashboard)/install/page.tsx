@@ -36,7 +36,7 @@ function categoryInfo(cage: VCageCurrentState, category: NetCategory) {
       netCode: cage.guard_net_code,
       mesh: "80 mm",
       installDate: cage.guard_net_installation_date,
-      daysRemaining: null as number | null,
+      daysRemaining: cage.guard_net_days_remaining,
     };
   }
   return {
@@ -44,7 +44,7 @@ function categoryInfo(cage: VCageCurrentState, category: NetCategory) {
     netCode: cage.top_net_code,
     mesh: null as string | null,
     installDate: cage.top_net_installation_date,
-    daysRemaining: null as number | null,
+    daysRemaining: null as number | null, // condition-based, no fixed schedule
   };
 }
 

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { AlertBadge } from "@/components/shared/alert-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { KpiCard } from "@/components/shared/kpi-card";
+import { CATEGORY_SHORT_LABELS } from "@/lib/constants";
 import type { VCagesMissingNet, VLowStock, VNetAlertStatus } from "@/lib/types/database";
 
 export default async function AlertsPage() {
@@ -57,7 +58,10 @@ export default async function AlertsPage() {
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="font-mono font-bold">{a.cage_code}</span>
                       <span className="truncate font-mono text-muted-foreground">{a.net_code}</span>
-                      <span className="hidden text-xs text-muted-foreground sm:inline">{a.site_name}</span>
+                      <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground sm:inline">
+                        {CATEGORY_SHORT_LABELS[a.category]}
+                      </span>
+                      <span className="hidden text-xs text-muted-foreground md:inline">{a.site_name}</span>
                     </div>
                     <AlertBadge daysRemaining={a.days_remaining} />
                   </Link>

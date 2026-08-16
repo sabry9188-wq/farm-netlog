@@ -105,7 +105,7 @@ export interface NetInstallation {
   net_id: string;
   cage_id: string;
   installation_date: string;
-  expected_change_date: string;
+  expected_change_date: string | null;
   removal_date: string | null;
   removal_reason: string | null;
   condition_at_installation: string | null;
@@ -242,6 +242,9 @@ export interface VCageCurrentState {
   cage_status_color: CageStatusColor;
   guard_net_installation_date: string | null;
   top_net_installation_date: string | null;
+  guard_net_expected_change_date: string | null;
+  guard_net_days_remaining: number | null;
+  guard_net_alert_color: AlertColor | null;
 }
 
 export interface VStockSummary {
