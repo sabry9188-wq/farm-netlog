@@ -42,6 +42,18 @@ export async function registerNetAction(net: Record<string, unknown>): Promise<A
   return res;
 }
 
+export async function updateNetAction(netId: string, updates: Record<string, unknown>): Promise<ActionResult> {
+  const res = await callRpc("fn_update_net", { p_net_id: netId, p_updates: updates });
+  revalidateCommon(["/nets", "/store", "/top-nets", "/guard-nets"]);
+  return res;
+}
+
+export async function deleteNetAction(netId: string): Promise<ActionResult> {
+  const res = await callRpc("fn_delete_net", { p_net_id: netId });
+  revalidateCommon(["/nets", "/store", "/dashboard", "/top-nets", "/guard-nets"]);
+  return res;
+}
+
 export async function installNetAction(input: {
   netId: string;
   cageId: string;

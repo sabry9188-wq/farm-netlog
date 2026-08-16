@@ -21,6 +21,8 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
   const { net, installations, movements, cleaning, repairs, disposal, lost, stats } = profile;
   const openInstallation = installations.find((i) => !i.removal_date);
   const previousCages = Array.from(new Set(installations.map((i) => i.cages?.cage_code).filter(Boolean)));
+  const canDelete =
+    installations.length === 0 && cleaning.length === 0 && repairs.length === 0 && !disposal && !lost;
 
   return (
     <div>
@@ -39,7 +41,14 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
             {CATEGORY_LABELS[net.category]} · {net.sites?.site_name}
           </p>
         </div>
-        {currentUser && <NetActionsBar net={net} role={currentUser.role} cageCode={openInstallation?.cages?.cage_code} />}
+        {currentUser && (
+          <NetActionsBar
+            net={net}
+            role={currentUser.role}
+            cageCode={openInstallation?.cages?.cage_code}
+            canDelete={canDelete}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

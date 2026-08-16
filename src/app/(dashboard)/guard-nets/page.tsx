@@ -30,7 +30,7 @@ export default async function GuardNetsPage({
       <Suspense>
         <NetsFilterBar showCategory={false} />
       </Suspense>
-      <NetsTable nets={nets} showCategory={false} />
+      <NetsTable nets={nets} showCategory={false} canManage={canRegister} />
     </div>
   );
 }

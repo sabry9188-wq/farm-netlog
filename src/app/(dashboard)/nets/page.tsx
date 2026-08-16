@@ -39,7 +39,7 @@ export default async function NetsInventoryPage({
       <Suspense>
         <NetsFilterBar />
       </Suspense>
-      <NetsTable nets={nets} />
+      <NetsTable nets={nets} canManage={canRegister} />
     </div>
   );
 }

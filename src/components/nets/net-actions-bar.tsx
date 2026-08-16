@@ -7,6 +7,8 @@ import { Bookmark, BookmarkX, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InstallToCageDialog } from "@/components/nets/install-to-cage-dialog";
 import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
+import { EditNetDialog } from "@/components/nets/edit-net-dialog";
+import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
 import { SendCleaningDialog } from "@/components/nets/send-cleaning-dialog";
 import { CompleteCleaningDialog } from "@/components/nets/complete-cleaning-dialog";
 import { SendRepairDialog } from "@/components/nets/send-repair-dialog";
@@ -17,7 +19,17 @@ import { RemoveNetDialog } from "@/components/nets/remove-net-dialog";
 import { setReservedAction } from "@/lib/actions/nets";
 import type { Net, UserRole } from "@/lib/types/database";
 
-export function NetActionsBar({ net, role, cageCode }: { net: Net; role: UserRole; cageCode?: string }) {
+export function NetActionsBar({
+  net,
+  role,
+  cageCode,
+  canDelete = false,
+}: {
+  net: Net;
+  role: UserRole;
+  cageCode?: string;
+  canDelete?: boolean;
+}) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -37,6 +49,14 @@ export function NetActionsBar({ net, role, cageCode }: { net: Net; role: UserRol
   }
 
   const buttons: React.ReactNode[] = [];
+  const canManage = role === "admin" || role === "storekeeper";
+
+  if (canManage) {
+    buttons.push(<EditNetDialog key="edit" net={net} small />);
+  }
+  if (canManage && canDelete) {
+    buttons.push(<DeleteNetDialog key="delete" netId={net.id} netCode={net.net_code} small />);
+  }
 
   if (net.status === "Installed in Cage" && cageCode) {
     buttons.push(

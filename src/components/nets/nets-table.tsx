@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { EditNetDialog } from "@/components/nets/edit-net-dialog";
+import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
 import { CATEGORY_SHORT_LABELS } from "@/lib/constants";
 import type { NetWithSite } from "@/lib/queries/nets";
 
-export function NetsTable({ nets, showCategory = true }: { nets: NetWithSite[]; showCategory?: boolean }) {
+export function NetsTable({
+  nets,
+  showCategory = true,
+  canManage = false,
+}: {
+  nets: NetWithSite[];
+  showCategory?: boolean;
+  canManage?: boolean;
+}) {
   if (nets.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
@@ -25,6 +35,7 @@ export function NetsTable({ nets, showCategory = true }: { nets: NetWithSite[]; 
             <TableHead>Condition</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Location</TableHead>
+            {canManage && <TableHead className="text-right">Actions</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,6 +54,14 @@ export function NetsTable({ nets, showCategory = true }: { nets: NetWithSite[]; 
                 <StatusBadge status={n.status} />
               </TableCell>
               <TableCell className="text-muted-foreground">{n.current_location}</TableCell>
+              {canManage && (
+                <TableCell>
+                  <div className="flex justify-end gap-1.5">
+                    <EditNetDialog net={n} small />
+                    <DeleteNetDialog netId={n.id} netCode={n.net_code} small />
+                  </div>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
