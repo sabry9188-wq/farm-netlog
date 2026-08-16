@@ -16,16 +16,16 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
   return (
     <div className="relative flex h-full flex-col text-sidebar-foreground">
       <Image src="/sidebar-bg.jpg" alt="" fill sizes="256px" className="object-cover" />
-      <div className="absolute inset-0 bg-sidebar/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-sidebar/55 via-sidebar/35 to-sidebar/60" />
 
       <div className="relative z-10 flex h-full flex-col">
         <div className="flex items-center gap-2.5 px-5 py-5">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-md">
             <Waves className="size-5" />
           </div>
           <div>
-            <p className="text-base font-extrabold tracking-tight text-white">NetLog</p>
-            <p className="text-[11px] font-medium text-white/80">Cage Farm Net Management</p>
+            <p className="text-base font-extrabold tracking-tight text-white [text-shadow:_0_1px_4px_rgb(0_0_0_/_70%)]">NetLog</p>
+            <p className="text-[11px] font-medium text-white/90 [text-shadow:_0_1px_3px_rgb(0_0_0_/_70%)]">Cage Farm Net Management</p>
           </div>
         </div>
 
@@ -38,8 +38,8 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
                 href={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold tracking-tight text-white transition-colors",
-                  active ? "bg-sidebar-accent shadow-sm" : "hover:bg-sidebar-accent/60",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold tracking-tight text-white transition-colors [text-shadow:_0_1px_3px_rgb(0_0_0_/_70%)]",
+                  active ? "bg-sidebar-accent/95 shadow-md" : "hover:bg-sidebar-accent/70",
                 )}
               >
                 <NavIcon name={item.icon} className="size-4.5 shrink-0 text-white" />
@@ -50,8 +50,8 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
         </nav>
 
         <div className="border-t border-sidebar-border px-5 py-4">
-          <p className="text-[11px] font-semibold text-white/70">Station-05 · 20 cages</p>
-          <p className="text-[11px] font-semibold text-white/70">Offshore · 24 cages</p>
+          <p className="text-[11px] font-semibold text-white/90 [text-shadow:_0_1px_3px_rgb(0_0_0_/_70%)]">Station-05 · 20 cages</p>
+          <p className="text-[11px] font-semibold text-white/90 [text-shadow:_0_1px_3px_rgb(0_0_0_/_70%)]">Offshore · 24 cages</p>
         </div>
       </div>
     </div>
