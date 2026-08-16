@@ -49,3 +49,6 @@ next-env.d.ts
 
 # personal notes files - never commit these (may contain secrets)
 *.docx
+
+# local-only source photo (already copied to public/sidebar-bg.jpg)
+/background pic/
