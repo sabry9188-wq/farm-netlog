@@ -4,6 +4,8 @@ import { getCurrentProfile } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { DownloadCloud } from "lucide-react";
 import { LookupEditor } from "@/components/settings/lookup-editor";
 import { SystemSettingsForm } from "@/components/settings/system-settings-form";
 import type { LookupRow, SystemSetting } from "@/lib/types/database";
@@ -36,6 +38,7 @@ export default async function SettingsPage() {
           <TabsTrigger value="removal">Removal Reasons</TabsTrigger>
           <TabsTrigger value="repair">Repair Types</TabsTrigger>
           <TabsTrigger value="disposal">Disposal Reasons</TabsTrigger>
+          <TabsTrigger value="backup">Data Backup</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">
@@ -71,6 +74,23 @@ export default async function SettingsPage() {
         <TabsContent value="disposal">
           <Card><CardHeader><CardTitle className="text-base">Disposal Reasons</CardTitle></CardHeader>
             <CardContent><LookupEditor table="disposal_reasons" items={(disposalReasons.data as LookupRow[]) ?? []} /></CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="backup">
+          <Card>
+            <CardHeader><CardTitle className="text-base">Data Backup</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Downloads every net, cage, and record in the system as one file. Supabase's free plan doesn&apos;t
+                include automatic backups, so keep a copy of this saved somewhere safe (Google Drive, email to
+                yourself) every week or two.
+              </p>
+              <Button asChild>
+                <a href="/api/backup" download>
+                  <DownloadCloud className="size-4" /> Download Backup
+                </a>
+              </Button>
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
