@@ -3,7 +3,11 @@ import type { AlertColor } from "@/lib/types/database";
 export const DEFAULT_NET_CHANGE_PERIOD_DAYS = 60;
 
 function toDate(value: string | Date): Date {
-  return value instanceof Date ? value : new Date(value + "T00:00:00");
+  if (value instanceof Date) return value;
+  // Plain "YYYY-MM-DD" values need a time appended so they parse in local
+  // time rather than UTC; full timestamps (e.g. created_at) already have
+  // one and must be passed through as-is.
+  return new Date(value.includes("T") ? value : value + "T00:00:00");
 }
 
 export function daysBetween(from: string | Date, to: string | Date): number {
