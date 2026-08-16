@@ -12,10 +12,10 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   return (data as Profile) ?? null;
 }
 
-export function canWrite(role: Profile["role"] | undefined): boolean {
-  return role === "admin" || role === "storekeeper" || role === "supervisor";
-}
-
-export function isAdmin(role: Profile["role"] | undefined): boolean {
-  return role === "admin";
-}
+export {
+  canInstallChangeNets,
+  canCleanRepair,
+  canManageNets,
+  canEditCageInfo,
+  isAdmin,
+} from "@/lib/permissions";

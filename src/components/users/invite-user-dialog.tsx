@@ -33,7 +33,7 @@ export function InviteUserDialog() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<UserRole>("supervisor");
+  const [role, setRole] = useState<UserRole>("farm_specialist");
   const [password, setPassword] = useState(generatePassword());
   const [isPending, startTransition] = useTransition();
   const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
@@ -43,7 +43,7 @@ export function InviteUserDialog() {
   function reset() {
     setEmail("");
     setFullName("");
-    setRole("supervisor");
+    setRole("farm_specialist");
     setPassword(generatePassword());
     setCreated(null);
     setCopied(false);

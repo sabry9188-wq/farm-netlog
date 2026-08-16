@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteByCode, getCagesForSite } from "@/lib/queries/cages";
-import { getCurrentProfile, canWrite } from "@/lib/auth";
+import { getCurrentProfile, canInstallChangeNets } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -56,7 +56,7 @@ export default async function InstallChangeNetPage({
   const { site: siteFilter } = await searchParams;
   const supabase = await createClient();
   const profile = await getCurrentProfile();
-  const writable = canWrite(profile?.role);
+  const writable = canInstallChangeNets(profile?.role);
 
   const [st05, offs] = await Promise.all([getSiteByCode(supabase, "ST05"), getSiteByCode(supabase, "OFFS")]);
   const [st05Cages, offsCages] = await Promise.all([

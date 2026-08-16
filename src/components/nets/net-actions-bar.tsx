@@ -17,6 +17,7 @@ import { DisposeNetDialog } from "@/components/nets/dispose-net-dialog";
 import { MarkLostDialog } from "@/components/nets/mark-lost-dialog";
 import { RemoveNetDialog } from "@/components/nets/remove-net-dialog";
 import { setReservedAction } from "@/lib/actions/nets";
+import { canInstallChangeNets, canCleanRepair, canManageNets } from "@/lib/permissions";
 import type { Net, UserRole } from "@/lib/types/database";
 
 export function NetActionsBar({
@@ -35,6 +36,8 @@ export function NetActionsBar({
 
   if (role === "viewer") return null;
   const canApproveDisposal = role === "admin";
+  const canInstall = canInstallChangeNets(role);
+  const canClean = canCleanRepair(role);
 
   function toggleReserve(next: boolean) {
     startTransition(async () => {
@@ -49,7 +52,7 @@ export function NetActionsBar({
   }
 
   const buttons: React.ReactNode[] = [];
-  const canManage = role === "admin" || role === "storekeeper";
+  const canManage = canManageNets(role);
 
   if (canManage) {
     buttons.push(<EditNetDialog key="edit" net={net} small />);
@@ -58,7 +61,7 @@ export function NetActionsBar({
     buttons.push(<DeleteNetDialog key="delete" netId={net.id} netCode={net.net_code} small />);
   }
 
-  if (net.status === "Installed in Cage" && cageCode) {
+  if (net.status === "Installed in Cage" && cageCode && canInstall) {
     buttons.push(
       <ChangeNetDialog
         key="change"
@@ -74,12 +77,16 @@ export function NetActionsBar({
   }
 
   if (["Available in Store", "Ready for Use", "Ready After Repair"].includes(net.status)) {
-    buttons.push(<InstallToCageDialog key="install" netId={net.id} netCode={net.net_code} siteId={net.site_id} category={net.category} small />);
-    buttons.push(<SendCleaningDialog key="clean" netId={net.id} netCode={net.net_code} small />);
-    buttons.push(<SendRepairDialog key="repair" netId={net.id} netCode={net.net_code} small />);
+    if (canInstall) {
+      buttons.push(<InstallToCageDialog key="install" netId={net.id} netCode={net.net_code} siteId={net.site_id} category={net.category} small />);
+    }
+    if (canClean) {
+      buttons.push(<SendCleaningDialog key="clean" netId={net.id} netCode={net.net_code} small />);
+      buttons.push(<SendRepairDialog key="repair" netId={net.id} netCode={net.net_code} small />);
+    }
   }
 
-  if (net.status === "Available in Store" || net.status === "Ready for Use") {
+  if (canClean && (net.status === "Available in Store" || net.status === "Ready for Use")) {
     buttons.push(
       <Button key="reserve" size="sm" variant="outline" onClick={() => toggleReserve(true)} disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : <Bookmark className="size-4" />}
@@ -88,7 +95,7 @@ export function NetActionsBar({
     );
   }
 
-  if (net.status === "Reserved") {
+  if (canClean && net.status === "Reserved") {
     buttons.push(
       <Button key="unreserve" size="sm" variant="outline" onClick={() => toggleReserve(false)} disabled={isPending}>
         {isPending ? <Loader2 className="size-4 animate-spin" /> : <BookmarkX className="size-4" />}
@@ -97,11 +104,11 @@ export function NetActionsBar({
     );
   }
 
-  if (net.status === "Sent for Cleaning" || net.status === "Under Cleaning") {
+  if (canClean && (net.status === "Sent for Cleaning" || net.status === "Under Cleaning")) {
     buttons.push(<CompleteCleaningDialog key="complete-clean" netId={net.id} netCode={net.net_code} small />);
   }
 
-  if (net.status === "Under Repair") {
+  if (canClean && net.status === "Under Repair") {
     buttons.push(<CompleteRepairDialog key="complete-repair" netId={net.id} netCode={net.net_code} small />);
   }
 
@@ -109,7 +116,7 @@ export function NetActionsBar({
     buttons.push(<DisposeNetDialog key="dispose" netId={net.id} netCode={net.net_code} small />);
   }
 
-  if (!["Installed in Cage", "Disposed", "Lost"].includes(net.status)) {
+  if (canClean && !["Installed in Cage", "Disposed", "Lost"].includes(net.status)) {
     buttons.push(<MarkLostDialog key="lost" netId={net.id} netCode={net.net_code} small />);
   }
 

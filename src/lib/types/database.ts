@@ -2,7 +2,7 @@
 // If the schema changes, update this file to match (or regenerate with
 // `npx supabase gen types typescript` once the Supabase CLI is linked).
 
-export type UserRole = "admin" | "storekeeper" | "supervisor" | "viewer";
+export type UserRole = "admin" | "manager" | "farm_specialist" | "diver" | "storekeeper" | "viewer";
 export type UserStatus = "active" | "inactive";
 export type NetCategory = "MAIN_NET" | "GUARD_NET" | "TOP_NET";
 export type AlertColor = "green" | "yellow" | "orange" | "red";

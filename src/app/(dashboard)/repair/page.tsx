@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getRepairQueue, getRepairHistory } from "@/lib/queries/workflows";
-import { getCurrentProfile, canWrite } from "@/lib/auth";
+import { getCurrentProfile, canCleanRepair } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,7 +12,7 @@ import { formatDate, daysBetween } from "@/lib/calculations";
 export default async function RepairPage() {
   const supabase = await createClient();
   const [queue, history, profile] = await Promise.all([getRepairQueue(supabase), getRepairHistory(supabase), getCurrentProfile()]);
-  const writable = canWrite(profile?.role);
+  const writable = canCleanRepair(profile?.role);
 
   return (
     <div>

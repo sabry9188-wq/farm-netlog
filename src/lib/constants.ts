@@ -13,9 +13,11 @@ export const CATEGORY_SHORT_LABELS: Record<NetCategory, string> = {
 };
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  admin: "Admin / Manager",
+  admin: "Admin",
+  manager: "Manager",
+  farm_specialist: "Farm Specialist",
+  diver: "Diver",
   storekeeper: "Storekeeper",
-  supervisor: "Farm Supervisor",
   viewer: "Viewer",
 };
 
