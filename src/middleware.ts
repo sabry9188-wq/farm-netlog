@@ -7,6 +7,11 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Everything except static assets and /api/cron/* (which is triggered by
+    // Vercel's scheduler with no browser session — it checks its own bearer
+    // secret instead, and must never be redirected to /login). Other API
+    // routes, like /api/backup, still go through this middleware so their
+    // Supabase session cookies stay refreshed.
+    "/((?!_next/static|_next/image|favicon.ico|api/cron/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
