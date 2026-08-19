@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Fish, Ruler, Calendar, Waves } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCageDetail, getCageRow, getCageInstallationHistory } from "@/lib/queries/cages";
-import { getCurrentProfile, canInstallChangeNets } from "@/lib/auth";
+import { getCurrentProfile, canInstallChangeNets, canEditCageInfo } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { AlertBadge } from "@/components/shared/alert-badge";
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { InstallNetDialog } from "@/components/nets/install-net-dialog";
+import { EditCageInfoDialog } from "@/components/cages/edit-cage-info-dialog";
 import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
 import { RemoveNetDialog } from "@/components/nets/remove-net-dialog";
 import { formatDate, daysBetween } from "@/lib/calculations";
@@ -38,6 +39,7 @@ export default async function CageDetailPage({
   const guardHistory = history.filter((h) => h.nets.category === "GUARD_NET");
   const topHistory = history.filter((h) => h.nets.category === "TOP_NET");
   const writable = canInstallChangeNets(profile?.role);
+  const canEditInfo = canEditCageInfo(profile?.role);
 
   return (
     <div>
@@ -48,8 +50,18 @@ export default async function CageDetailPage({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-1">
-          <CardHeader>
+          <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Cage Information</CardTitle>
+            {canEditInfo && (
+              <EditCageInfoDialog
+                cageId={cageRow.id}
+                cageCode={cage.cage_code}
+                species={cage.species}
+                avgFishWeightG={cage.avg_fish_weight_g}
+                stockingDate={cage.stocking_date}
+                productionStage={cage.production_stage}
+              />
+            )}
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <InfoRow icon={Ruler} label="Diameter × Depth" value={`${cageRow.diameter_m}m × ${cageRow.depth_m}m`} />
