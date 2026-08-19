@@ -10,6 +10,7 @@ import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
 import { EditNetDialog } from "@/components/nets/edit-net-dialog";
 import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
 import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
+import { ReactivateNetDialog } from "@/components/nets/reactivate-net-dialog";
 import { SendCleaningDialog } from "@/components/nets/send-cleaning-dialog";
 import { CompleteCleaningDialog } from "@/components/nets/complete-cleaning-dialog";
 import { SendRepairDialog } from "@/components/nets/send-repair-dialog";
@@ -122,6 +123,10 @@ export function NetActionsBar({
 
   if (canClean && !["Installed in Cage", "Disposed", "Lost"].includes(net.status)) {
     buttons.push(<MarkLostDialog key="lost" netId={net.id} netCode={net.net_code} small />);
+  }
+
+  if (role === "admin" && net.status === "Disposed") {
+    buttons.push(<ReactivateNetDialog key="reactivate" netId={net.id} netCode={net.net_code} small />);
   }
 
   if (buttons.length === 0) return null;

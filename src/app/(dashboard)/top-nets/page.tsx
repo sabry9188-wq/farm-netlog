@@ -30,7 +30,7 @@ export default async function TopNetsPage({
       <Suspense>
         <NetsFilterBar showCategory={false} />
       </Suspense>
-      <NetsTable nets={nets} showCategory={false} canManage={canRegister} />
+      <NetsTable nets={nets} showCategory={false} canManage={canRegister} isAdmin={profile?.role === "admin"} />
     </div>
   );
 }

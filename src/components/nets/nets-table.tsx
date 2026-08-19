@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { EditNetDialog } from "@/components/nets/edit-net-dialog";
 import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
 import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
+import { ReactivateNetDialog } from "@/components/nets/reactivate-net-dialog";
 import { CATEGORY_SHORT_LABELS } from "@/lib/constants";
 import type { NetWithSite } from "@/lib/queries/nets";
 
@@ -11,10 +12,12 @@ export function NetsTable({
   nets,
   showCategory = true,
   canManage = false,
+  isAdmin = false,
 }: {
   nets: NetWithSite[];
   showCategory?: boolean;
   canManage?: boolean;
+  isAdmin?: boolean;
 }) {
   if (nets.length === 0) {
     return (
@@ -36,7 +39,7 @@ export function NetsTable({
             <TableHead>Condition</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Location</TableHead>
-            {canManage && <TableHead className="text-right">Actions</TableHead>}
+            {(canManage || isAdmin) && <TableHead className="text-right">Actions</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,12 +58,17 @@ export function NetsTable({
                 <StatusBadge status={n.status} />
               </TableCell>
               <TableCell className="text-muted-foreground">{n.current_location}</TableCell>
-              {canManage && (
+              {(canManage || isAdmin) && (
                 <TableCell>
                   <div className="flex justify-end gap-1.5">
-                    <RegisterNetDialog template={{ ...n, site_code: n.sites?.site_code }} small />
-                    <EditNetDialog net={n} small />
-                    <DeleteNetDialog netId={n.id} netCode={n.net_code} small />
+                    {isAdmin && n.status === "Disposed" && <ReactivateNetDialog netId={n.id} netCode={n.net_code} small />}
+                    {canManage && (
+                      <>
+                        <RegisterNetDialog template={{ ...n, site_code: n.sites?.site_code }} small />
+                        <EditNetDialog net={n} small />
+                        <DeleteNetDialog netId={n.id} netCode={n.net_code} small />
+                      </>
+                    )}
                   </div>
                 </TableCell>
               )}

@@ -54,6 +54,12 @@ export async function deleteNetAction(netId: string): Promise<ActionResult> {
   return res;
 }
 
+export async function reactivateNetAction(netId: string, remarks?: string): Promise<ActionResult> {
+  const res = await callRpc("fn_reactivate_net", { p_net_id: netId, p_remarks: remarks ?? null });
+  revalidateCommon(["/nets", "/store", "/dashboard", "/top-nets", "/guard-nets", "/movements"]);
+  return res;
+}
+
 export async function installNetAction(input: {
   netId: string;
   cageId: string;

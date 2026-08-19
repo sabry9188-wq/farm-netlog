@@ -57,7 +57,7 @@ export default async function NetStorePage({
       <Suspense>
         <NetsFilterBar />
       </Suspense>
-      <NetsTable nets={nets} canManage={canRegister} />
+      <NetsTable nets={nets} canManage={canRegister} isAdmin={profile?.role === "admin"} />
     </div>
   );
 }
