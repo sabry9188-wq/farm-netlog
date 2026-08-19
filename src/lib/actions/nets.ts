@@ -60,6 +60,12 @@ export async function reactivateNetAction(netId: string, remarks?: string): Prom
   return res;
 }
 
+export async function markFoundAction(netId: string, condition?: string, remarks?: string): Promise<ActionResult> {
+  const res = await callRpc("fn_mark_found", { p_net_id: netId, p_condition: condition ?? null, p_remarks: remarks ?? null });
+  revalidateCommon(["/nets", "/store", "/dashboard", "/top-nets", "/guard-nets", "/movements"]);
+  return res;
+}
+
 export async function installNetAction(input: {
   netId: string;
   cageId: string;

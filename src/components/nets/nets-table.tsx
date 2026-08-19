@@ -5,6 +5,7 @@ import { EditNetDialog } from "@/components/nets/edit-net-dialog";
 import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
 import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
 import { ReactivateNetDialog } from "@/components/nets/reactivate-net-dialog";
+import { MarkFoundDialog } from "@/components/nets/mark-found-dialog";
 import { CATEGORY_SHORT_LABELS } from "@/lib/constants";
 import type { NetWithSite } from "@/lib/queries/nets";
 
@@ -13,11 +14,13 @@ export function NetsTable({
   showCategory = true,
   canManage = false,
   isAdmin = false,
+  canMarkFound = false,
 }: {
   nets: NetWithSite[];
   showCategory?: boolean;
   canManage?: boolean;
   isAdmin?: boolean;
+  canMarkFound?: boolean;
 }) {
   if (nets.length === 0) {
     return (
@@ -39,7 +42,7 @@ export function NetsTable({
             <TableHead>Condition</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Location</TableHead>
-            {(canManage || isAdmin) && <TableHead className="text-right">Actions</TableHead>}
+            {(canManage || isAdmin || canMarkFound) && <TableHead className="text-right">Actions</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -58,10 +61,13 @@ export function NetsTable({
                 <StatusBadge status={n.status} />
               </TableCell>
               <TableCell className="text-muted-foreground">{n.current_location}</TableCell>
-              {(canManage || isAdmin) && (
+              {(canManage || isAdmin || canMarkFound) && (
                 <TableCell>
                   <div className="flex justify-end gap-1.5">
                     {isAdmin && n.status === "Disposed" && <ReactivateNetDialog netId={n.id} netCode={n.net_code} small />}
+                    {canMarkFound && n.status === "Lost" && (
+                      <MarkFoundDialog netId={n.id} netCode={n.net_code} currentCondition={n.condition} small />
+                    )}
                     {canManage && (
                       <>
                         <RegisterNetDialog template={{ ...n, site_code: n.sites?.site_code }} small />

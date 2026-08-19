@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { getNets } from "@/lib/queries/nets";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, canCleanRepair } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { NetsFilterBar } from "@/components/nets/nets-filter-bar";
 import { NetsTable } from "@/components/nets/nets-table";
@@ -39,7 +39,12 @@ export default async function NetsInventoryPage({
       <Suspense>
         <NetsFilterBar />
       </Suspense>
-      <NetsTable nets={nets} canManage={canRegister} isAdmin={profile?.role === "admin"} />
+      <NetsTable
+        nets={nets}
+        canManage={canRegister}
+        isAdmin={profile?.role === "admin"}
+        canMarkFound={canCleanRepair(profile?.role)}
+      />
     </div>
   );
 }

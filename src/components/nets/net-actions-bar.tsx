@@ -11,6 +11,7 @@ import { EditNetDialog } from "@/components/nets/edit-net-dialog";
 import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
 import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
 import { ReactivateNetDialog } from "@/components/nets/reactivate-net-dialog";
+import { MarkFoundDialog } from "@/components/nets/mark-found-dialog";
 import { SendCleaningDialog } from "@/components/nets/send-cleaning-dialog";
 import { CompleteCleaningDialog } from "@/components/nets/complete-cleaning-dialog";
 import { SendRepairDialog } from "@/components/nets/send-repair-dialog";
@@ -127,6 +128,10 @@ export function NetActionsBar({
 
   if (role === "admin" && net.status === "Disposed") {
     buttons.push(<ReactivateNetDialog key="reactivate" netId={net.id} netCode={net.net_code} small />);
+  }
+
+  if (canClean && net.status === "Lost") {
+    buttons.push(<MarkFoundDialog key="found" netId={net.id} netCode={net.net_code} currentCondition={net.condition} small />);
   }
 
   if (buttons.length === 0) return null;
