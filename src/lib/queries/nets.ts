@@ -85,3 +85,39 @@ export async function getNetProfile(supabase: SB, netCode: string): Promise<NetP
     stats: (statsRes.data as VNetLifecycleStats) ?? null,
   };
 }
+
+export interface LostNetRow {
+  net: NetWithSite;
+  record: LostRecord | null;
+}
+
+export async function getLostNets(supabase: SB): Promise<LostNetRow[]> {
+  const { data: nets } = await supabase.from("nets").select("*, sites(site_code, site_name)").eq("status", "Lost").order("net_code");
+  const netIds = ((nets as NetWithSite[]) ?? []).map((n) => n.id);
+  const { data: records } = netIds.length
+    ? await supabase.from("lost_records").select("*").in("net_id", netIds).order("created_at", { ascending: false })
+    : { data: [] };
+
+  const recordByNet = new Map<string, LostRecord>();
+  for (const r of (records as LostRecord[]) ?? []) if (!recordByNet.has(r.net_id)) recordByNet.set(r.net_id, r);
+
+  return ((nets as NetWithSite[]) ?? []).map((n) => ({ net: n, record: recordByNet.get(n.id) ?? null }));
+}
+
+export interface DisposedNetRow {
+  net: NetWithSite;
+  record: DisposalRecord | null;
+}
+
+export async function getDisposedNets(supabase: SB): Promise<DisposedNetRow[]> {
+  const { data: nets } = await supabase.from("nets").select("*, sites(site_code, site_name)").eq("status", "Disposed").order("net_code");
+  const netIds = ((nets as NetWithSite[]) ?? []).map((n) => n.id);
+  const { data: records } = netIds.length
+    ? await supabase.from("disposal_records").select("*").in("net_id", netIds).order("created_at", { ascending: false })
+    : { data: [] };
+
+  const recordByNet = new Map<string, DisposalRecord>();
+  for (const r of (records as DisposalRecord[]) ?? []) if (!recordByNet.has(r.net_id)) recordByNet.set(r.net_id, r);
+
+  return ((nets as NetWithSite[]) ?? []).map((n) => ({ net: n, record: recordByNet.get(n.id) ?? null }));
+}

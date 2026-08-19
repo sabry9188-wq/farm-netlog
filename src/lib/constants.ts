@@ -62,6 +62,7 @@ export const NAV_ITEMS = [
   { href: "/install", label: "Install / Change Net", icon: "ArrowLeftRight" },
   { href: "/cleaning", label: "Cleaning", icon: "Sparkles" },
   { href: "/repair", label: "Repair", icon: "Wrench" },
+  { href: "/lost-found", label: "Lost & Found", icon: "PackageSearch" },
   { href: "/movements", label: "Movement History", icon: "History" },
   { href: "/top-nets", label: "Top Nets", icon: "Bird" },
   { href: "/guard-nets", label: "Guard Nets", icon: "Shield" },

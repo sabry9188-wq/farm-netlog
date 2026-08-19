@@ -14,6 +14,7 @@ import {
   Users,
   Settings,
   ShieldCheck,
+  PackageSearch,
   type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +34,7 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   Users,
   Settings,
   ShieldCheck,
+  PackageSearch,
 };
 
 export function NavIcon({ name, className }: { name: string; className?: string }) {
