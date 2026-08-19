@@ -24,7 +24,7 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
         </div>
       </div>
 
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
         {items.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
@@ -33,7 +33,7 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold tracking-tight text-white/85 transition-colors",
+                "flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold tracking-tight text-white/85 transition-colors",
                 active ? "bg-sidebar-accent text-white shadow-sm" : "hover:bg-sidebar-accent/60 hover:text-white",
               )}
             >
@@ -44,9 +44,17 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
         })}
       </nav>
 
-      <div className="border-t border-sidebar-border px-5 py-4">
-        <p className="text-[11px] font-semibold text-white/60">Station-05 · 20 cages</p>
-        <p className="text-[11px] font-semibold text-white/60">Offshore · 24 cages</p>
+      <div className="px-3 py-4">
+        <div className="space-y-2 rounded-2xl bg-sidebar-accent/40 px-4 py-3.5">
+          <div className="flex items-center justify-between text-[11px] font-semibold text-white/70">
+            <span>Station-05</span>
+            <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">20 cages</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] font-semibold text-white/70">
+            <span>Offshore</span>
+            <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">24 cages</span>
+          </div>
+        </div>
       </div>
     </div>
   );

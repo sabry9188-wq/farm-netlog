@@ -16,9 +16,11 @@ import { createClient } from "@/lib/supabase/server";
 import { getDashboardData } from "@/lib/queries/dashboard";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { AlertBadge } from "@/components/shared/alert-badge";
-import { StatusChart } from "@/components/dashboard/status-chart";
+import { StatusDonutChart } from "@/components/dashboard/status-donut-chart";
 import { SiteComparisonChart } from "@/components/dashboard/site-comparison-chart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SiteStatusChart } from "@/components/dashboard/site-status-chart";
+import { MiniCalendar } from "@/components/dashboard/mini-calendar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 
@@ -75,19 +77,20 @@ export default async function DashboardPage() {
         <KpiCard label="Overdue" value={totals.overdue} icon={AlertOctagon} accent="red" href="/alerts" />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card className="border-ocean-700/15">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Station-05</CardTitle>
             <span className="text-xs text-muted-foreground">{st05?.cageCount ?? 20} cages</span>
           </CardHeader>
           <CardContent>
-            <SiteSummaryRow label="Installed" value={st05?.installed ?? 0} />
-            <SiteSummaryRow label="Available in store" value={st05?.inStore ?? 0} />
-            <SiteSummaryRow label="Under cleaning" value={st05?.cleaning ?? 0} />
-            <SiteSummaryRow label="Under repair" value={st05?.repair ?? 0} />
-            <SiteSummaryRow label="Due for change (≤14d)" value={st05?.dueForChange ?? 0} accent="orange" />
-            <SiteSummaryRow label="Overdue" value={st05?.overdue ?? 0} accent="red" />
+            <SiteStatusChart
+              installed={st05?.installed ?? 0}
+              inStore={st05?.inStore ?? 0}
+              cleaning={st05?.cleaning ?? 0}
+              repair={st05?.repair ?? 0}
+            />
+            <SiteAlertStats dueForChange={st05?.dueForChange ?? 0} overdue={st05?.overdue ?? 0} />
             <Button asChild variant="ghost" className="mt-3 w-full justify-between">
               <Link href="/cages/station-05">
                 Open Station-05 cage map <ArrowRight className="size-4" />
@@ -102,17 +105,30 @@ export default async function DashboardPage() {
             <span className="text-xs text-muted-foreground">{offs?.cageCount ?? 24} cages</span>
           </CardHeader>
           <CardContent>
-            <SiteSummaryRow label="Installed" value={offs?.installed ?? 0} />
-            <SiteSummaryRow label="Available in store" value={offs?.inStore ?? 0} />
-            <SiteSummaryRow label="Under cleaning" value={offs?.cleaning ?? 0} />
-            <SiteSummaryRow label="Under repair" value={offs?.repair ?? 0} />
-            <SiteSummaryRow label="Due for change (≤14d)" value={offs?.dueForChange ?? 0} accent="orange" />
-            <SiteSummaryRow label="Overdue" value={offs?.overdue ?? 0} accent="red" />
+            <SiteStatusChart
+              installed={offs?.installed ?? 0}
+              inStore={offs?.inStore ?? 0}
+              cleaning={offs?.cleaning ?? 0}
+              repair={offs?.repair ?? 0}
+            />
+            <SiteAlertStats dueForChange={offs?.dueForChange ?? 0} overdue={offs?.overdue ?? 0} />
             <Button asChild variant="ghost" className="mt-3 w-full justify-between">
               <Link href="/cages/offshore">
                 Open Offshore cage map <ArrowRight className="size-4" />
               </Link>
             </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2 xl:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-base">Calendar</CardTitle>
+            <CardDescription>
+              {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MiniCalendar />
           </CardContent>
         </Card>
       </div>
@@ -123,7 +139,7 @@ export default async function DashboardPage() {
             <CardTitle className="text-base">Net Status Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
-            <StatusChart data={statusChartData} />
+            <StatusDonutChart data={statusChartData} />
           </CardContent>
         </Card>
         <Card>
@@ -172,29 +188,17 @@ export default async function DashboardPage() {
   );
 }
 
-function SiteSummaryRow({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number;
-  accent?: "orange" | "red";
-}) {
+function SiteAlertStats({ dueForChange, overdue }: { dueForChange: number; overdue: number }) {
   return (
-    <div className="flex items-center justify-between border-b border-border/60 py-1.5 text-sm last:border-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span
-        className={
-          accent === "red" && value > 0
-            ? "font-mono font-bold text-status-red"
-            : accent === "orange" && value > 0
-              ? "font-mono font-bold text-status-orange"
-              : "font-mono font-bold text-foreground"
-        }
-      >
-        {value}
-      </span>
+    <div className="mt-4 grid grid-cols-2 gap-2">
+      <div className="rounded-xl bg-status-orange-bg px-3 py-2">
+        <p className="text-[11px] font-semibold text-status-orange">Due for change (≤14d)</p>
+        <p className="font-mono text-xl font-bold text-status-orange">{dueForChange}</p>
+      </div>
+      <div className="rounded-xl bg-status-red-bg px-3 py-2">
+        <p className="text-[11px] font-semibold text-status-red">Overdue</p>
+        <p className="font-mono text-xl font-bold text-status-red">{overdue}</p>
+      </div>
     </div>
   );
 }
