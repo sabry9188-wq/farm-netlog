@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   Waves,
   Anchor,
@@ -21,6 +20,7 @@ import { StatusChart } from "@/components/dashboard/status-chart";
 import { SiteComparisonChart } from "@/components/dashboard/site-comparison-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/page-header";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -50,44 +50,29 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="relative mb-6 overflow-hidden rounded-2xl">
-        <Image
-          src="/farm-hero.jpg"
-          alt="Station-05 cage farm"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        {/* Light shading only behind the title/button — the rest of the photo, and the area behind the KPI cards, stays bright */}
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
+      <PageHeader
+        title="Farm Dashboard"
+        description="Where is every net in the farm right now?"
+        actions={
+          <Button asChild>
+            <Link href="/cages">
+              <Building2 className="size-4" /> View Cage Map
+            </Link>
+          </Button>
+        }
+      />
 
-        <div className="relative z-10 p-5 sm:p-8">
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl [text-shadow:_0_1px_6px_rgb(0_0_0_/_60%)]">Farm Dashboard</h1>
-              <p className="mt-1 text-sm text-white/90 [text-shadow:_0_1px_4px_rgb(0_0_0_/_60%)]">Where is every net in the farm right now?</p>
-            </div>
-            <Button asChild variant="secondary" className="w-fit bg-white/15 text-white backdrop-blur-sm hover:bg-white/25">
-              <Link href="/cages">
-                <Building2 className="size-4" /> View Cage Map
-              </Link>
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            <KpiCard label="Total Nets" value={totals.totalNets} icon={Waves} accent="ocean" href="/nets" />
-            <KpiCard label="Installed" value={totals.installed} icon={Anchor} accent="ocean" href="/nets?status=Installed+in+Cage" />
-            <KpiCard label="In Store" value={totals.inStore} icon={Package} accent="green" href="/store" />
-            <KpiCard label="Cleaning" value={totals.cleaning} icon={Sparkles} accent="purple" href="/cleaning" />
-            <KpiCard label="Repair" value={totals.repair} icon={Wrench} accent="orange" href="/repair" />
-            <KpiCard label="Damaged" value={totals.damaged} icon={AlertOctagon} accent="red" href="/nets?status=Damaged" />
-            <KpiCard label="Lost" value={totals.lost} icon={Ghost} accent="grey" href="/nets?status=Lost" />
-            <KpiCard label="Disposed" value={totals.disposed} icon={Trash2} accent="grey" href="/nets?status=Disposed" />
-            <KpiCard label="Due Soon (14d)" value={totals.dueSoon14} icon={Clock} accent="orange" href="/alerts" />
-            <KpiCard label="Overdue" value={totals.overdue} icon={AlertOctagon} accent="red" href="/alerts" />
-          </div>
-        </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <KpiCard label="Total Nets" value={totals.totalNets} icon={Waves} accent="aqua" href="/nets" />
+        <KpiCard label="Installed" value={totals.installed} icon={Anchor} accent="ocean" href="/nets?status=Installed+in+Cage" />
+        <KpiCard label="In Store" value={totals.inStore} icon={Package} accent="green" href="/store" />
+        <KpiCard label="Cleaning" value={totals.cleaning} icon={Sparkles} accent="purple" href="/cleaning" />
+        <KpiCard label="Repair" value={totals.repair} icon={Wrench} accent="orange" href="/repair" />
+        <KpiCard label="Damaged" value={totals.damaged} icon={AlertOctagon} accent="red" href="/nets?status=Damaged" />
+        <KpiCard label="Lost" value={totals.lost} icon={Ghost} accent="grey" href="/nets?status=Lost" />
+        <KpiCard label="Disposed" value={totals.disposed} icon={Trash2} accent="grey" href="/nets?status=Disposed" />
+        <KpiCard label="Due Soon (14d)" value={totals.dueSoon14} icon={Clock} accent="orange" href="/alerts" />
+        <KpiCard label="Overdue" value={totals.overdue} icon={AlertOctagon} accent="red" href="/alerts" />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">

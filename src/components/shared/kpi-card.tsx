@@ -12,21 +12,33 @@ export function KpiCard({
   label: string;
   value: string | number;
   icon?: LucideIcon;
-  accent?: "ocean" | "green" | "orange" | "red" | "purple" | "grey";
+  accent?: "ocean" | "aqua" | "green" | "orange" | "red" | "purple" | "grey";
   href?: string;
   hint?: string;
 }) {
   const accentClasses: Record<string, string> = {
-    ocean: "text-primary bg-primary/10",
-    green: "text-status-green bg-status-green-bg",
-    orange: "text-status-orange bg-status-orange-bg",
-    red: "text-status-red bg-status-red-bg",
-    purple: "text-status-purple bg-status-purple-bg",
-    grey: "text-status-grey bg-status-grey-bg",
+    ocean: "bg-primary text-primary-foreground",
+    aqua: "bg-aqua-500 text-white",
+    green: "bg-status-green text-status-green-foreground",
+    orange: "bg-status-orange text-status-orange-foreground",
+    red: "bg-status-red text-status-red-foreground",
+    purple: "bg-status-purple text-status-purple-foreground",
+    grey: "bg-status-grey text-status-grey-foreground",
+  };
+
+  const barClasses: Record<string, string> = {
+    ocean: "bg-primary",
+    aqua: "bg-aqua-500",
+    green: "bg-status-green",
+    orange: "bg-status-orange",
+    red: "bg-status-red",
+    purple: "bg-status-purple",
+    grey: "bg-status-grey",
   };
 
   const content = (
-    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5">
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5">
+      <span className={cn("absolute inset-x-0 top-0 h-1", barClasses[accent])} />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</p>
@@ -34,7 +46,7 @@ export function KpiCard({
           {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
         </div>
         {Icon && (
-          <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", accentClasses[accent])}>
+          <div className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl shadow-sm", accentClasses[accent])}>
             <Icon className="size-5" />
           </div>
         )}
