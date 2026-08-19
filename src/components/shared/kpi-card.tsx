@@ -16,9 +16,9 @@ export function KpiCard({
   href?: string;
   hint?: string;
 }) {
-  const accentClasses: Record<string, string> = {
+  const cardClasses: Record<string, string> = {
     ocean: "bg-primary text-primary-foreground",
-    aqua: "bg-aqua-500 text-white",
+    aqua: "bg-aqua-500 text-ocean-950",
     green: "bg-status-green text-status-green-foreground",
     orange: "bg-status-orange text-status-orange-foreground",
     red: "bg-status-red text-status-red-foreground",
@@ -26,27 +26,21 @@ export function KpiCard({
     grey: "bg-status-grey text-status-grey-foreground",
   };
 
-  const barClasses: Record<string, string> = {
-    ocean: "bg-primary",
-    aqua: "bg-aqua-500",
-    green: "bg-status-green",
-    orange: "bg-status-orange",
-    red: "bg-status-red",
-    purple: "bg-status-purple",
-    grey: "bg-status-grey",
-  };
-
   const content = (
-    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5">
-      <span className={cn("absolute inset-x-0 top-0 h-1", barClasses[accent])} />
+    <div
+      className={cn(
+        "group relative overflow-hidden rounded-2xl p-5 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5",
+        cardClasses[accent],
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</p>
-          <p className="mt-2 font-mono text-3xl font-bold tabular-nums text-foreground">{value}</p>
-          {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+          <p className="text-xs font-semibold tracking-wide uppercase opacity-80">{label}</p>
+          <p className="mt-2 font-mono text-3xl font-bold tabular-nums">{value}</p>
+          {hint && <p className="mt-1 text-xs opacity-80">{hint}</p>}
         </div>
         {Icon && (
-          <div className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl shadow-sm", accentClasses[accent])}>
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/20 ring-1 ring-white/30">
             <Icon className="size-5" />
           </div>
         )}
