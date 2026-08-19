@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { StatusBadge } from "@/components/shared/status-badge";
 import { EditNetDialog } from "@/components/nets/edit-net-dialog";
 import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
+import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
 import { CATEGORY_SHORT_LABELS } from "@/lib/constants";
 import type { NetWithSite } from "@/lib/queries/nets";
 
@@ -57,6 +58,7 @@ export function NetsTable({
               {canManage && (
                 <TableCell>
                   <div className="flex justify-end gap-1.5">
+                    <RegisterNetDialog template={{ ...n, site_code: n.sites?.site_code }} small />
                     <EditNetDialog net={n} small />
                     <DeleteNetDialog netId={n.id} netCode={n.net_code} small />
                   </div>

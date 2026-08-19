@@ -9,6 +9,7 @@ import { InstallToCageDialog } from "@/components/nets/install-to-cage-dialog";
 import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
 import { EditNetDialog } from "@/components/nets/edit-net-dialog";
 import { DeleteNetDialog } from "@/components/nets/delete-net-dialog";
+import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
 import { SendCleaningDialog } from "@/components/nets/send-cleaning-dialog";
 import { CompleteCleaningDialog } from "@/components/nets/complete-cleaning-dialog";
 import { SendRepairDialog } from "@/components/nets/send-repair-dialog";
@@ -25,11 +26,13 @@ export function NetActionsBar({
   role,
   cageCode,
   canDelete = false,
+  siteCode,
 }: {
   net: Net;
   role: UserRole;
   cageCode?: string;
   canDelete?: boolean;
+  siteCode?: string;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -55,6 +58,7 @@ export function NetActionsBar({
   const canManage = canManageNets(role);
 
   if (canManage) {
+    buttons.push(<RegisterNetDialog key="duplicate" template={{ ...net, site_code: siteCode }} small />);
     buttons.push(<EditNetDialog key="edit" net={net} small />);
   }
   if (canManage && canDelete) {

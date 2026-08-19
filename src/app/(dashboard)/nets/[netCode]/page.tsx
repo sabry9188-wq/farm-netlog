@@ -47,6 +47,7 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
             role={currentUser.role}
             cageCode={openInstallation?.cages?.cage_code}
             canDelete={canDelete}
+            siteCode={net.sites?.site_code}
           />
         )}
       </div>

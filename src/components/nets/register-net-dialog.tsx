@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, PlusCircle } from "lucide-react";
+import { Copy, Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,23 +21,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { registerNetAction } from "@/lib/actions/nets";
 import { CATEGORY_LABELS } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
-import type { NetCategory } from "@/lib/types/database";
+import type { Net, NetCategory } from "@/lib/types/database";
 
 const CONDITIONS = ["New", "Excellent", "Good", "Fair", "Poor"];
 
-export function RegisterNetDialog({ defaultCategory }: { defaultCategory?: NetCategory }) {
+export type NetTemplate = Net & { site_code?: string };
+
+export function RegisterNetDialog({
+  defaultCategory,
+  template,
+  small,
+}: {
+  defaultCategory?: NetCategory;
+  /** Pre-fills the form from an existing net (mesh, material, manufacturer, supplier,
+   * dimensions, cost) — a "Duplicate" shortcut for registering the next net in a batch. */
+  template?: NetTemplate;
+  small?: boolean;
+}) {
   const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState<NetCategory>(defaultCategory ?? "MAIN_NET");
-  const [siteCode, setSiteCode] = useState("ST05");
+  const [category, setCategory] = useState<NetCategory>(template?.category ?? defaultCategory ?? "MAIN_NET");
+  const [siteCode, setSiteCode] = useState(template?.site_code ?? "ST05");
   const [netCode, setNetCode] = useState("");
-  const [mesh, setMesh] = useState("");
-  const [diameter, setDiameter] = useState("");
-  const [depth, setDepth] = useState("");
-  const [material, setMaterial] = useState("");
-  const [manufacturer, setManufacturer] = useState("");
-  const [supplier, setSupplier] = useState("");
+  const [mesh, setMesh] = useState(template?.mesh_size ?? "");
+  const [diameter, setDiameter] = useState(template?.diameter_m?.toString() ?? "");
+  const [depth, setDepth] = useState(template?.depth_m?.toString() ?? "");
+  const [material, setMaterial] = useState(template?.material ?? "");
+  const [manufacturer, setManufacturer] = useState(template?.manufacturer ?? "");
+  const [supplier, setSupplier] = useState(template?.supplier ?? "");
   const [purchaseDate, setPurchaseDate] = useState("");
-  const [purchaseCost, setPurchaseCost] = useState("");
+  const [purchaseCost, setPurchaseCost] = useState(template?.purchase_cost?.toString() ?? "");
   const [isNew, setIsNew] = useState(true);
   const [condition, setCondition] = useState("New");
   const [remarks, setRemarks] = useState("");
@@ -46,14 +58,16 @@ export function RegisterNetDialog({ defaultCategory }: { defaultCategory?: NetCa
 
   function reset() {
     setNetCode("");
-    setMesh("");
-    setDiameter("");
-    setDepth("");
-    setMaterial("");
-    setManufacturer("");
-    setSupplier("");
+    if (!template) {
+      setMesh("");
+      setDiameter("");
+      setDepth("");
+      setMaterial("");
+      setManufacturer("");
+      setSupplier("");
+      setPurchaseCost("");
+    }
     setPurchaseDate("");
-    setPurchaseCost("");
     setCondition("New");
     setIsNew(true);
     setRemarks("");
@@ -100,14 +114,25 @@ export function RegisterNetDialog({ defaultCategory }: { defaultCategory?: NetCa
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="size-4" /> Register Net
-        </Button>
+        {template ? (
+          <Button size={small ? "sm" : "default"} variant="outline" title={`Duplicate ${template.net_code} to register a new net`}>
+            <Copy className="size-4" />
+            {!small && "Duplicate"}
+          </Button>
+        ) : (
+          <Button>
+            <PlusCircle className="size-4" /> Register Net
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Register New Net</DialogTitle>
-          <DialogDescription>Add a physical net to inventory. Leave Net ID blank to auto-generate it.</DialogDescription>
+          <DialogTitle>{template ? `Register New Net — copied from ${template.net_code}` : "Register New Net"}</DialogTitle>
+          <DialogDescription>
+            {template
+              ? "Details are pre-filled from that net. Adjust anything that's different, and a new Net ID will be generated automatically."
+              : "Add a physical net to inventory. Leave Net ID blank to auto-generate it."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-2 gap-3">
