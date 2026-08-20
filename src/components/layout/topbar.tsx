@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, Search, BellRing, LogOut, User, UserCog } from "lucide-react";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Menu, Search, BellRing, LogOut, User, UserCog, X } from "lucide-react";
+import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -53,9 +53,21 @@ export function Topbar({
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card/95 px-4 backdrop-blur supports-backdrop-filter:bg-card/80 sm:px-6">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-72 p-0 lg:hidden">
+        <SheetContent
+          side="left"
+          showCloseButton={false}
+          className="w-64 max-w-[80vw] gap-0 border-none bg-transparent p-3 shadow-none lg:hidden"
+        >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <SidebarNav role={role} siteStats={siteStats} onNavigate={() => setOpen(false)} />
+          <div className="relative h-full overflow-hidden rounded-3xl shadow-lg">
+            <SidebarNav role={role} siteStats={siteStats} onNavigate={() => setOpen(false)} />
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon-sm" className="absolute top-3 right-3 text-white hover:bg-white/10 hover:text-white">
+                <X className="size-4" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </SheetClose>
+          </div>
         </SheetContent>
       </Sheet>
       <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(true)}>
