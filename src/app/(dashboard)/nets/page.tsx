@@ -28,12 +28,14 @@ export default async function NetsInventoryPage({
   ]);
 
   const canRegister = profile?.role === "admin" || profile?.role === "storekeeper";
+  const hasFilters = Boolean(sp.site || sp.category || sp.mesh || sp.status || sp.condition || sp.q);
+  const netCount = `${nets.length} net${nets.length === 1 ? "" : "s"}`;
 
   return (
     <div>
       <PageHeader
         title="Net Inventory"
-        description={`${nets.length} net${nets.length === 1 ? "" : "s"} across all categories and sites.`}
+        description={hasFilters ? `${netCount} matching your filters.` : `${netCount} across all categories and sites.`}
         actions={canRegister ? <RegisterNetDialog /> : undefined}
       />
       <Suspense>
