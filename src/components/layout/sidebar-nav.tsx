@@ -33,11 +33,18 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold tracking-tight text-white/85 transition-colors",
-                active ? "bg-sidebar-accent text-white shadow-sm" : "hover:bg-sidebar-accent/60 hover:text-white",
+                "flex items-center gap-2.5 rounded-2xl py-2 pr-4 pl-2 text-sm font-semibold tracking-tight transition-colors",
+                active ? "bg-white text-ocean-950 shadow-md" : "text-white/85 hover:bg-sidebar-accent/60 hover:text-white",
               )}
             >
-              <NavIcon name={item.icon} className={cn("size-4.5 shrink-0", active ? "text-sidebar-primary" : "text-white/70")} />
+              <span
+                className={cn(
+                  "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
+                  active ? "bg-primary/10 text-primary" : "text-white/70",
+                )}
+              >
+                <NavIcon name={item.icon} className="size-4.5" />
+              </span>
               <span className="truncate">{item.label}</span>
             </Link>
           );
