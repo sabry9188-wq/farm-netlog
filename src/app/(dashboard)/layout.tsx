@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { Topbar } from "@/components/layout/topbar";
+import { getSiteStats } from "@/lib/queries/sites";
 import type { Profile, VNetAlertStatus } from "@/lib/types/database";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -25,13 +26,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .in("alert_color", ["orange", "red"]);
   const alertCount = ((alerts as Pick<VNetAlertStatus, "alert_color">[]) ?? []).length;
 
+  const siteStats = await getSiteStats(supabase);
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       <aside className="hidden w-64 shrink-0 lg:block">
-        <SidebarNav role={profile.role} />
+        <SidebarNav role={profile.role} siteStats={siteStats} />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar profile={profile} role={profile.role} alertCount={alertCount} />
+        <Topbar profile={profile} role={profile.role} alertCount={alertCount} siteStats={siteStats} />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>

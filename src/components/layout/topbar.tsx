@@ -20,8 +20,19 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { signOutAction } from "@/lib/actions/auth";
 import { ROLE_LABELS } from "@/lib/constants";
 import type { Profile, UserRole } from "@/lib/types/database";
+import type { SiteStat } from "@/lib/queries/sites";
 
-export function Topbar({ profile, role, alertCount }: { profile: Profile | null; role: UserRole; alertCount: number }) {
+export function Topbar({
+  profile,
+  role,
+  alertCount,
+  siteStats,
+}: {
+  profile: Profile | null;
+  role: UserRole;
+  alertCount: number;
+  siteStats: SiteStat[];
+}) {
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const router = useRouter();
@@ -44,7 +55,7 @@ export function Topbar({ profile, role, alertCount }: { profile: Profile | null;
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 p-0 lg:hidden">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <SidebarNav role={role} onNavigate={() => setOpen(false)} />
+          <SidebarNav role={role} siteStats={siteStats} onNavigate={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
       <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(true)}>

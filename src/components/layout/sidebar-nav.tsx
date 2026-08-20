@@ -7,8 +7,23 @@ import { NAV_ITEMS } from "@/lib/constants";
 import { NavIcon } from "@/components/layout/nav-icon";
 import { Waves } from "lucide-react";
 import type { UserRole } from "@/lib/types/database";
+import type { SiteStat } from "@/lib/queries/sites";
 
-export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: () => void }) {
+const SITE_ACCENTS = ["aqua", "yellow"] as const;
+const SITE_ACCENT_CLASSES: Record<(typeof SITE_ACCENTS)[number], { dot: string; chip: string }> = {
+  aqua: { dot: "bg-aqua-400", chip: "bg-aqua-400/20 text-aqua-400" },
+  yellow: { dot: "bg-status-yellow", chip: "bg-status-yellow/25 text-status-yellow" },
+};
+
+export function SidebarNav({
+  role,
+  siteStats,
+  onNavigate,
+}: {
+  role: UserRole;
+  siteStats: SiteStat[];
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   const items = NAV_ITEMS.filter((item) => !("adminOnly" in item && item.adminOnly) || role === "admin");
 
@@ -52,15 +67,26 @@ export function SidebarNav({ role, onNavigate }: { role: UserRole; onNavigate?: 
       </nav>
 
       <div className="px-3 py-4">
-        <div className="space-y-2 rounded-2xl bg-sidebar-accent/40 px-4 py-3.5">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-white/70">
-            <span>Station-05</span>
-            <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">20 cages</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] font-semibold text-white/70">
-            <span>Offshore</span>
-            <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">24 cages</span>
-          </div>
+        <div className="space-y-3 rounded-2xl bg-white px-4 py-3.5 shadow-md">
+          {siteStats.map((s, i) => {
+            const accent = SITE_ACCENT_CLASSES[SITE_ACCENTS[i % SITE_ACCENTS.length]];
+            return (
+              <div key={s.site.id}>
+                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-ocean-950/70">
+                  <span className={cn("size-1.5 rounded-full", accent.dot)} />
+                  {s.site.site_name}
+                </p>
+                <div className="flex gap-1.5">
+                  <span className={cn("flex-1 rounded-lg px-2 py-1 text-center text-[10px] font-bold", accent.chip)}>
+                    {s.cageCount} cages
+                  </span>
+                  <span className={cn("flex-1 rounded-lg px-2 py-1 text-center text-[10px] font-bold", accent.chip)}>
+                    {s.netCount} nets
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
