@@ -27,12 +27,20 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/login");
+  const pathname = request.nextUrl.pathname;
+  // Reachable without a session — the password-recovery email link signs
+  // the visitor in via /auth/callback on its way to /reset-password, so
+  // that route must stay public rather than being bounced to /dashboard.
+  const isPublicRoute = ["/login", "/forgot-password", "/reset-password", "/auth/callback"].some(
+    (path) => pathname.startsWith(path),
+  );
+  // Only these should redirect an already-signed-in visitor away.
+  const isAuthRoute = ["/login", "/forgot-password"].some((path) => pathname.startsWith(path));
 
-  if (!user && !isAuthRoute) {
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.searchParams.set("next", request.nextUrl.pathname);
+    url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 

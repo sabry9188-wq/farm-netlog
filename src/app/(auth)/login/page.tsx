@@ -12,7 +12,7 @@ const FEATURES = [
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div className="theme-light min-h-screen w-full bg-white">
       {/* Hero: full-window farm photo with the login form on top */}
       <div className="relative flex min-h-[560px] w-full flex-col items-center justify-center overflow-hidden px-4 pt-16 pb-24 sm:min-h-[640px]">
         <Image src="/login-hero.jpg" alt="" fill priority sizes="100vw" className="object-cover" />

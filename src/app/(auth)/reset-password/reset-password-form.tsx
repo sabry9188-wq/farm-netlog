@@ -1,39 +1,40 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState } from "react";
-import { signInAction } from "@/lib/actions/auth";
+import { updatePasswordAction } from "@/lib/actions/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
-export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(signInAction, undefined as
+export function ResetPasswordForm() {
+  const [state, formAction, isPending] = useActionState(updatePasswordAction, undefined as
     | { error: string }
     | undefined);
 
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" placeholder="you@farm.com" required autoComplete="email" />
+        <Label htmlFor="password">New password</Label>
+        <Input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" />
       </div>
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
-          <Link href="/forgot-password" className="text-xs font-medium text-primary hover:underline">
-            Forgot password?
-          </Link>
-        </div>
-        <Input id="password" name="password" type="password" required autoComplete="current-password" />
+        <Label htmlFor="confirmPassword">Confirm new password</Label>
+        <Input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          required
+          minLength={8}
+          autoComplete="new-password"
+        />
       </div>
       {state?.error && (
         <p className="rounded-md bg-status-red-bg px-3 py-2 text-sm text-status-red">{state.error}</p>
       )}
       <Button type="submit" className="w-full rounded-full" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
-        Sign in
+        Update password
       </Button>
     </form>
   );
