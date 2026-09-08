@@ -16,7 +16,26 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { updateCageInfoAction } from "@/lib/actions/cages";
+
+const KNOWN_SPECIES = [
+  "Sobaity",
+  "Shaam",
+  "Gabit",
+  "Grouper",
+  "Bedha",
+  "Sheri",
+  "Safi",
+  "Bia arabia",
+];
+const OTHER_SPECIES = "__other__";
 
 export function EditCageInfoDialog({
   cageId,
@@ -34,6 +53,10 @@ export function EditCageInfoDialog({
   productionStage: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const isKnownSpecies = species != null && KNOWN_SPECIES.includes(species);
+  const [speciesSelectVal, setSpeciesSelectVal] = useState(
+    species && !isKnownSpecies ? OTHER_SPECIES : species ?? ""
+  );
   const [speciesVal, setSpeciesVal] = useState(species ?? "");
   const [weightVal, setWeightVal] = useState(avgFishWeightG?.toString() ?? "");
   const [stockingDateVal, setStockingDateVal] = useState(stockingDate ?? "");
@@ -78,7 +101,35 @@ export function EditCageInfoDialog({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="cage-species">Species</Label>
-            <Input id="cage-species" value={speciesVal} onChange={(e) => setSpeciesVal(e.target.value)} placeholder="e.g. Seabass" />
+            <Select
+              value={speciesSelectVal}
+              onValueChange={(val) => {
+                setSpeciesSelectVal(val);
+                if (val !== OTHER_SPECIES) setSpeciesVal(val);
+                else setSpeciesVal("");
+              }}
+            >
+              <SelectTrigger id="cage-species" className="w-full">
+                <SelectValue placeholder="Select a species" />
+              </SelectTrigger>
+              <SelectContent>
+                {KNOWN_SPECIES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+                <SelectItem value={OTHER_SPECIES}>Other…</SelectItem>
+              </SelectContent>
+            </Select>
+            {speciesSelectVal === OTHER_SPECIES && (
+              <Input
+                autoFocus
+                value={speciesVal}
+                onChange={(e) => setSpeciesVal(e.target.value)}
+                placeholder="Enter species name"
+                className="mt-1.5"
+              />
+            )}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="cage-weight">Avg. fish weight (g)</Label>
