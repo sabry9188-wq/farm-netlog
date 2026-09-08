@@ -78,6 +78,7 @@
 }
 
 :root {
+  color-scheme: light;
   --background: oklch(0.985 0.004 240);
   --foreground: oklch(0.22 0.03 250);
   --card: oklch(0.955 0.016 240);
@@ -148,6 +149,7 @@
    and the login/dashboard hero photo overlays keep their fixed navy
    tokens in both modes, since those are brand elements, not theme. */
 .dark {
+  color-scheme: dark;
   --background: oklch(0.16 0.022 250);
   --foreground: oklch(0.94 0.01 240);
   --card: oklch(0.205 0.025 250);
@@ -186,6 +188,7 @@
    class — for pages (e.g. login) that are always rendered on a fixed
    white/photo background and must never inherit dark-mode text colors. */
 .theme-light {
+  color-scheme: light;
   --background: oklch(0.985 0.004 240);
   --foreground: oklch(0.22 0.03 250);
   --card: oklch(0.955 0.016 240);
