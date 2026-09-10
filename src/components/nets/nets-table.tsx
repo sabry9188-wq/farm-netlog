@@ -36,6 +36,7 @@ export function NetsTable({
         <TableHeader>
           <TableRow>
             <TableHead>Net ID</TableHead>
+            <TableHead>Physical #</TableHead>
             <TableHead>Site</TableHead>
             {showCategory && <TableHead>Category</TableHead>}
             <TableHead>Mesh</TableHead>
@@ -53,6 +54,7 @@ export function NetsTable({
                   {n.net_code}
                 </Link>
               </TableCell>
+              <TableCell className="text-muted-foreground">{n.physical_number ?? "—"}</TableCell>
               <TableCell className="text-muted-foreground">{n.sites?.site_code}</TableCell>
               {showCategory && <TableCell>{CATEGORY_SHORT_LABELS[n.category]}</TableCell>}
               <TableCell>{n.mesh_size ?? "—"}</TableCell>
