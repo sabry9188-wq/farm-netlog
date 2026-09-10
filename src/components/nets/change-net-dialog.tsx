@@ -138,6 +138,7 @@ export function ChangeNetDialog({
                 {nets.map((n) => (
                   <SelectItem key={n.id} value={n.id}>
                     <span className="font-mono">{n.net_code}</span>
+                    {n.physical_number && <span className="ml-2 text-muted-foreground">#{n.physical_number}</span>}
                     {n.mesh_size && <span className="ml-2 text-muted-foreground">{n.mesh_size}</span>}
                   </SelectItem>
                 ))}
@@ -148,6 +149,7 @@ export function ChangeNetDialog({
           {selected && (
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-border bg-muted/40 p-3 text-sm">
               <InfoRow label="Net ID" value={selected.net_code} mono />
+              <InfoRow label="Physical #" value={selected.physical_number ?? "—"} />
               <InfoRow label="Mesh" value={selected.mesh_size ?? "—"} />
               <InfoRow label="Condition" value={selected.condition} />
               <InfoRow label="Status" value={<StatusBadge status={selected.status} className="text-[10px]" />} />
