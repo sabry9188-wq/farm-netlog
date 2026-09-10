@@ -77,6 +77,7 @@ export interface StockThreshold {
 export interface Net {
   id: string;
   net_code: string;
+  physical_number: string | null;
   category: NetCategory;
   site_id: string;
   mesh_size: string | null;

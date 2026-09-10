@@ -24,6 +24,7 @@ import type { Net } from "@/lib/types/database";
 
 export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [physicalNumber, setPhysicalNumber] = useState(net.physical_number ?? "");
   const [mesh, setMesh] = useState(net.mesh_size ?? "");
   const [diameter, setDiameter] = useState(net.diameter_m?.toString() ?? "");
   const [depth, setDepth] = useState(net.depth_m?.toString() ?? "");
@@ -41,6 +42,7 @@ export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
   function submit() {
     startTransition(async () => {
       const res = await updateNetAction(net.id, {
+        physical_number: physicalNumber,
         mesh_size: mesh,
         diameter_m: diameter,
         depth_m: depth,
@@ -77,6 +79,13 @@ export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
         </DialogHeader>
 
         <div className="grid grid-cols-2 gap-3">
+          <Field label="Physical net number">
+            <Input
+              value={physicalNumber}
+              onChange={(e) => setPhysicalNumber(e.target.value)}
+              placeholder="As marked on the net"
+            />
+          </Field>
           <Field label="Mesh size">
             <Input value={mesh} onChange={(e) => setMesh(e.target.value)} placeholder="e.g. 10 mm" />
           </Field>

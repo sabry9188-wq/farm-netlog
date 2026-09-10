@@ -42,6 +42,7 @@ export function RegisterNetDialog({
   const [category, setCategory] = useState<NetCategory>(template?.category ?? defaultCategory ?? "MAIN_NET");
   const [siteCode, setSiteCode] = useState(template?.site_code ?? "ST05");
   const [netCode, setNetCode] = useState("");
+  const [physicalNumber, setPhysicalNumber] = useState("");
   const [mesh, setMesh] = useState(template?.mesh_size ?? "");
   const [diameter, setDiameter] = useState(template?.diameter_m?.toString() ?? "");
   const [depth, setDepth] = useState(template?.depth_m?.toString() ?? "");
@@ -58,6 +59,7 @@ export function RegisterNetDialog({
 
   function reset() {
     setNetCode("");
+    setPhysicalNumber("");
     if (!template) {
       setMesh("");
       setDiameter("");
@@ -84,6 +86,7 @@ export function RegisterNetDialog({
       }
       const res = await registerNetAction({
         net_code: netCode || null,
+        physical_number: physicalNumber || null,
         category,
         site_id: site.id,
         mesh_size: mesh || null,
@@ -157,6 +160,13 @@ export function RegisterNetDialog({
           </Field>
           <Field label="Net ID (optional)">
             <Input value={netCode} onChange={(e) => setNetCode(e.target.value)} placeholder="Auto-generated" />
+          </Field>
+          <Field label="Physical net number (optional)">
+            <Input
+              value={physicalNumber}
+              onChange={(e) => setPhysicalNumber(e.target.value)}
+              placeholder="As marked on the net"
+            />
           </Field>
           <Field label="Mesh size">
             <Input value={mesh} onChange={(e) => setMesh(e.target.value)} placeholder="e.g. 10 mm" />

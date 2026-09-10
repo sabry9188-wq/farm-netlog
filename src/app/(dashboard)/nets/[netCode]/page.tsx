@@ -56,6 +56,7 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
         <Card>
           <CardHeader><CardTitle className="text-base">Net Information</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
+            <Row label="Physical number" value={net.physical_number ?? "—"} />
             <Row label="Mesh" value={net.mesh_size ?? "—"} />
             <Row label="Diameter" value={net.diameter_m ? `${net.diameter_m} m` : "—"} />
             <Row label="Depth" value={net.depth_m ? `${net.depth_m} m` : "—"} />
