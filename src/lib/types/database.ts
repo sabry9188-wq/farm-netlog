@@ -246,6 +246,9 @@ export interface VCageCurrentState {
   guard_net_expected_change_date: string | null;
   guard_net_days_remaining: number | null;
   guard_net_alert_color: AlertColor | null;
+  main_net_physical_number: string | null;
+  guard_net_physical_number: string | null;
+  top_net_physical_number: string | null;
 }
 
 export interface VStockSummary {

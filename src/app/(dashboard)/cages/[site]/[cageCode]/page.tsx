@@ -103,6 +103,7 @@ export default async function CageDetailPage({
                   {cage.main_net_days_remaining !== null && <AlertBadge daysRemaining={cage.main_net_days_remaining} />}
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-4">
+                  <InfoRow label="Physical #" value={cage.main_net_physical_number ?? "—"} />
                   <InfoRow label="Mesh" value={cage.main_net_mesh ?? "—"} />
                   <InfoRow label="Condition" value={cage.main_net_condition ?? "—"} />
                   <InfoRow label="Installed" value={formatDate(cage.main_net_installation_date)} />
@@ -150,6 +151,7 @@ export default async function CageDetailPage({
                   </Link>
                   {cage.guard_net_days_remaining !== null && <AlertBadge daysRemaining={cage.guard_net_days_remaining} />}
                 </div>
+                <InfoRow label="Physical #" value={cage.guard_net_physical_number ?? "—"} />
                 <InfoRow label="Condition" value={cage.guard_net_condition ?? "—"} />
                 {cage.guard_net_expected_change_date && (
                   <InfoRow label="Next change" value={formatDate(cage.guard_net_expected_change_date)} />
@@ -194,6 +196,7 @@ export default async function CageDetailPage({
                 <Link href={`/nets/${cage.top_net_code}`} className="font-mono text-base font-bold text-primary hover:underline">
                   {cage.top_net_code}
                 </Link>
+                <InfoRow label="Physical #" value={cage.top_net_physical_number ?? "—"} />
                 <InfoRow label="Condition" value={cage.top_net_condition ?? "—"} />
                 <p className="text-xs text-muted-foreground italic">No fixed schedule — changed only if damaged (holes, tears).</p>
               </div>
@@ -254,7 +257,12 @@ function InfoRow({
 function HistoryTable({
   rows,
 }: {
-  rows: { nets: { net_code: string; mesh_size: string | null }; installation_date: string; removal_date: string | null; removal_reason: string | null }[];
+  rows: {
+    nets: { net_code: string; mesh_size: string | null; physical_number: string | null };
+    installation_date: string;
+    removal_date: string | null;
+    removal_reason: string | null;
+  }[];
 }) {
   if (rows.length === 0) {
     return <p className="py-6 text-center text-sm text-muted-foreground">No history yet.</p>;
@@ -264,6 +272,7 @@ function HistoryTable({
       <TableHeader>
         <TableRow>
           <TableHead>Net ID</TableHead>
+          <TableHead>Physical #</TableHead>
           <TableHead>Mesh</TableHead>
           <TableHead>Installed</TableHead>
           <TableHead>Removed</TableHead>
@@ -279,6 +288,7 @@ function HistoryTable({
                 {r.nets.net_code}
               </Link>
             </TableCell>
+            <TableCell>{r.nets.physical_number ?? "—"}</TableCell>
             <TableCell>{r.nets.mesh_size ?? "—"}</TableCell>
             <TableCell>{formatDate(r.installation_date)}</TableCell>
             <TableCell>{r.removal_date ? formatDate(r.removal_date) : <span className="font-semibold text-status-blue">Current</span>}</TableCell>
