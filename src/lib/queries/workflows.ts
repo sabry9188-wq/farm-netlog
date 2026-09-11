@@ -56,6 +56,7 @@ export async function getCleaningHistory(supabase: SB) {
 export interface InCageCleaningRow {
   id: string;
   start_date: string;
+  completion_date: string | null;
   method: string | null;
   adequate: boolean | null;
   remarks: string | null;
@@ -73,7 +74,7 @@ export interface InCageCleaningRow {
 export async function getInCageCleaningLog(supabase: SB): Promise<InCageCleaningRow[]> {
   const { data } = await supabase
     .from("cleaning_records")
-    .select("id, net_id, cage_id, start_date, method, adequate, remarks, nets(net_code, physical_number), cages(cage_code)")
+    .select("id, net_id, cage_id, start_date, completion_date, method, adequate, remarks, nets(net_code, physical_number), cages(cage_code)")
     .order("net_id", { ascending: true })
     .order("start_date", { ascending: true });
 

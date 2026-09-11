@@ -72,7 +72,7 @@ export default async function CleaningPage() {
               <TableRow>
                 <TableHead>Cage Number</TableHead>
                 <TableHead>Net (Tag) Number</TableHead>
-                <TableHead>Net Cleaning Date</TableHead>
+                <TableHead>Net Cleaning Dates</TableHead>
                 <TableHead>No. of Cleaning Cycle</TableHead>
                 <TableHead>Cleaning Method</TableHead>
                 <TableHead>Cleaning Adequate</TableHead>
@@ -94,7 +94,11 @@ export default async function CleaningPage() {
                       "—"
                     )}
                   </TableCell>
-                  <TableCell>{formatDate(r.start_date)}</TableCell>
+                  <TableCell>
+                    {r.completion_date && r.completion_date !== r.start_date
+                      ? `${formatDate(r.start_date)} – ${formatDate(r.completion_date)}`
+                      : formatDate(r.start_date)}
+                  </TableCell>
                   <TableCell>{r.cycle}</TableCell>
                   <TableCell>{r.method ?? "—"}</TableCell>
                   <TableCell>

@@ -140,14 +140,17 @@ export async function sendToCleaningAction(input: {
 
 export async function logCageCleaningAction(input: {
   netId: string;
-  cleaningDate?: string;
+  startDate?: string;
+  completionDate?: string;
   method?: string;
   adequate: boolean;
   remarks?: string;
 }): Promise<ActionResult> {
+  const today = new Date().toISOString().slice(0, 10);
   const res = await callRpc("fn_log_cage_cleaning", {
     p_net_id: input.netId,
-    p_cleaning_date: input.cleaningDate ?? new Date().toISOString().slice(0, 10),
+    p_start_date: input.startDate ?? today,
+    p_completion_date: input.completionDate ?? input.startDate ?? today,
     p_method: input.method ?? null,
     p_adequate: input.adequate,
     p_remarks: input.remarks ?? null,
