@@ -17,7 +17,12 @@ create policy repair_sheets_public_read on storage.objects for select
 create policy repair_sheets_authenticated_insert on storage.objects for insert
   with check (bucket_id = 'repair-sheets' and auth.uid() is not null);
 
-create or replace function fn_complete_repair(
+-- Adding a new parameter changes the function's signature, so
+-- CREATE OR REPLACE would create a second overload instead of
+-- truly replacing the old 7-argument version — drop it explicitly first.
+drop function if exists fn_complete_repair(uuid, date, text, numeric, text, text, text);
+
+create function fn_complete_repair(
   p_net_id uuid,
   p_repair_completion date default current_date,
   p_condition_after text default 'Good',
