@@ -15,14 +15,28 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { sendToRepairAction } from "@/lib/actions/nets";
 
 const REPAIR_TYPES = ["Mesh repair", "Rope repair", "Seam repair", "Panel replacement", "Float line repair", "Sink line repair", "Other"];
 
-export function SendRepairDialog({ netId, netCode, small }: { netId: string; netCode: string; small?: boolean }) {
+export function SendRepairDialog({
+  netId,
+  netCode,
+  meshSize,
+  diameterM,
+  small,
+}: {
+  netId: string;
+  netCode: string;
+  meshSize?: string | null;
+  diameterM?: number | null;
+  small?: boolean;
+}) {
   const [open, setOpen] = useState(false);
+  const [repairStart, setRepairStart] = useState(new Date().toISOString().slice(0, 10));
   const [repairType, setRepairType] = useState("Mesh repair");
   const [damage, setDamage] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -30,7 +44,7 @@ export function SendRepairDialog({ netId, netCode, small }: { netId: string; net
 
   function submit() {
     startTransition(async () => {
-      const res = await sendToRepairAction({ netId, repairType, damageDescription: damage });
+      const res = await sendToRepairAction({ netId, repairStart, repairType, damageDescription: damage });
       if (res.error) {
         toast.error(res.error);
         return;
@@ -54,6 +68,17 @@ export function SendRepairDialog({ netId, netCode, small }: { netId: string; net
           <DialogDescription>Starts a repair record for this net.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-border bg-muted/40 p-3 text-sm">
+            <InfoRow label="Net Number" value={netCode} mono />
+            <InfoRow label="Repair Start Date" value={formatShort(repairStart)} />
+            <InfoRow label="Mesh Size" value={meshSize ?? "—"} />
+            <InfoRow label="Diameter" value={diameterM ? `${diameterM} m` : "—"} />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Repair start date</Label>
+            <Input type="date" value={repairStart} onChange={(e) => setRepairStart(e.target.value)} />
+          </div>
           <div className="space-y-1.5">
             <Label>Repair type</Label>
             <Select value={repairType} onValueChange={setRepairType}>
@@ -79,5 +104,20 @@ export function SendRepairDialog({ netId, netCode, small }: { netId: string; net
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function formatShort(iso: string): string {
+  if (!iso) return "—";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+function InfoRow({ label, value, mono }: { label: string; value: React.ReactNode; mono?: boolean }) {
+  return (
+    <div>
+      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className={mono ? "font-mono font-semibold" : "font-medium"}>{value}</p>
+    </div>
   );
 }

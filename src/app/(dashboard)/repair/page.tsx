@@ -47,7 +47,7 @@ export default async function RepairPage() {
                   <TableCell className="max-w-64 truncate">{record?.damage_description ?? "—"}</TableCell>
                   {writable && (
                     <TableCell className="text-right">
-                      <CompleteRepairDialog netId={net.id} netCode={net.net_code} small />
+                      <CompleteRepairDialog netId={net.id} netCode={net.net_code} meshSize={net.mesh_size} diameterM={net.diameter_m} small />
                     </TableCell>
                   )}
                 </TableRow>
@@ -70,6 +70,7 @@ export default async function RepairPage() {
                 <TableHead>Type</TableHead>
                 <TableHead>Outcome</TableHead>
                 <TableHead>Cost</TableHead>
+                <TableHead>Sheet</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -85,6 +86,15 @@ export default async function RepairPage() {
                   <TableCell>{r.repair_type ?? "—"}</TableCell>
                   <TableCell>{r.outcome ?? "—"}</TableCell>
                   <TableCell>{r.cost ? `$${Number(r.cost).toLocaleString()}` : "—"}</TableCell>
+                  <TableCell>
+                    {r.repair_sheet_url ? (
+                      <a href={r.repair_sheet_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                        View
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

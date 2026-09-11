@@ -162,6 +162,7 @@ export interface RepairRecord {
   condition_after: string | null;
   outcome: string | null;
   remarks: string | null;
+  repair_sheet_url: string | null;
   created_at: string;
 }
 

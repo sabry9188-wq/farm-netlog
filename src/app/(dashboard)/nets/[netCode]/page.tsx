@@ -197,7 +197,7 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
-                    <TableRow><TableHead>Start</TableHead><TableHead>Completed</TableHead><TableHead>Type</TableHead><TableHead>Outcome</TableHead><TableHead>Cost</TableHead></TableRow>
+                    <TableRow><TableHead>Start</TableHead><TableHead>Completed</TableHead><TableHead>Type</TableHead><TableHead>Outcome</TableHead><TableHead>Cost</TableHead><TableHead>Sheet</TableHead></TableRow>
                   </TableHeader>
                   <TableBody>
                     {repairs.map((r) => (
@@ -207,6 +207,15 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
                         <TableCell>{r.repair_type ?? "—"}</TableCell>
                         <TableCell>{r.outcome ?? "—"}</TableCell>
                         <TableCell>{r.cost ? `$${r.cost.toLocaleString()}` : "—"}</TableCell>
+                        <TableCell>
+                          {r.repair_sheet_url ? (
+                            <a href={r.repair_sheet_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                              View
+                            </a>
+                          ) : (
+                            "—"
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

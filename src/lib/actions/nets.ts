@@ -201,6 +201,7 @@ export async function completeRepairAction(input: {
   outcome: "Ready for Use" | "Beyond Repair";
   performedBy?: string;
   remarks?: string;
+  repairSheetUrl?: string;
 }): Promise<ActionResult> {
   const res = await callRpc("fn_complete_repair", {
     p_net_id: input.netId,
@@ -210,6 +211,7 @@ export async function completeRepairAction(input: {
     p_outcome: input.outcome,
     p_performed_by: input.performedBy ?? null,
     p_remarks: input.remarks ?? null,
+    p_repair_sheet_url: input.repairSheetUrl ?? null,
   });
   revalidateCommon(["/repair", "/nets", "/store", "/dashboard"]);
   return res;

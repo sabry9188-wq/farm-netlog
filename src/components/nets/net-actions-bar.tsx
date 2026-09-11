@@ -92,7 +92,9 @@ export function NetActionsBar({
     }
     if (canClean) {
       buttons.push(<SendCleaningDialog key="clean" netId={net.id} netCode={net.net_code} small />);
-      buttons.push(<SendRepairDialog key="repair" netId={net.id} netCode={net.net_code} small />);
+      buttons.push(
+        <SendRepairDialog key="repair" netId={net.id} netCode={net.net_code} meshSize={net.mesh_size} diameterM={net.diameter_m} small />,
+      );
     }
   }
 
@@ -119,7 +121,9 @@ export function NetActionsBar({
   }
 
   if (canClean && net.status === "Under Repair") {
-    buttons.push(<CompleteRepairDialog key="complete-repair" netId={net.id} netCode={net.net_code} small />);
+    buttons.push(
+      <CompleteRepairDialog key="complete-repair" netId={net.id} netCode={net.net_code} meshSize={net.mesh_size} diameterM={net.diameter_m} small />,
+    );
   }
 
   if (!["Installed in Cage", "Disposed", "Lost"].includes(net.status) && (canApproveDisposal || role === "storekeeper")) {
