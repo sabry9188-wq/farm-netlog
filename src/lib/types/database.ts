@@ -136,11 +136,13 @@ export interface NetMovement {
 export interface CleaningRecord {
   id: string;
   net_id: string;
+  cage_id: string | null;
   start_date: string;
   completion_date: string | null;
   method: string | null;
   condition_before: string | null;
   condition_after: string | null;
+  adequate: boolean | null;
   performed_by: string | null;
   remarks: string | null;
   created_at: string;

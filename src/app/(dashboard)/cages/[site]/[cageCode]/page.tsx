@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Fish, Ruler, Calendar, Waves } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCageDetail, getCageRow, getCageInstallationHistory } from "@/lib/queries/cages";
-import { getCurrentProfile, canInstallChangeNets, canEditCageInfo } from "@/lib/auth";
+import { getCurrentProfile, canInstallChangeNets, canEditCageInfo, canCleanRepair } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { AlertBadge } from "@/components/shared/alert-badge";
@@ -15,6 +15,7 @@ import { InstallNetDialog } from "@/components/nets/install-net-dialog";
 import { EditCageInfoDialog } from "@/components/cages/edit-cage-info-dialog";
 import { ChangeNetDialog } from "@/components/nets/change-net-dialog";
 import { RemoveNetDialog } from "@/components/nets/remove-net-dialog";
+import { LogCageCleaningDialog } from "@/components/nets/log-cage-cleaning-dialog";
 import { formatDate, daysBetween } from "@/lib/calculations";
 import { SITE_CODES_BY_SLUG } from "@/lib/constants";
 
@@ -40,6 +41,7 @@ export default async function CageDetailPage({
   const topHistory = history.filter((h) => h.nets.category === "TOP_NET");
   const writable = canInstallChangeNets(profile?.role);
   const canEditInfo = canEditCageInfo(profile?.role);
+  const canClean = canCleanRepair(profile?.role);
 
   return (
     <div>
@@ -87,6 +89,7 @@ export default async function CageDetailPage({
                     small
                   />
                   <RemoveNetDialog netId={cage.main_net_id} netCode={cage.main_net_code!} cageCode={cage.cage_code} />
+                  {canClean && <LogCageCleaningDialog netId={cage.main_net_id} netCode={cage.main_net_code!} small />}
                 </div>
               ) : (
                 <InstallNetDialog cageId={cageRow.id} cageCode={cage.cage_code} siteId={cage.site_id} category="MAIN_NET" />
@@ -137,6 +140,7 @@ export default async function CageDetailPage({
                     small
                   />
                   <RemoveNetDialog netId={cage.guard_net_id} netCode={cage.guard_net_code!} cageCode={cage.cage_code} />
+                  {canClean && <LogCageCleaningDialog netId={cage.guard_net_id} netCode={cage.guard_net_code!} small />}
                 </div>
               ) : (
                 <InstallNetDialog cageId={cageRow.id} cageCode={cage.cage_code} siteId={cage.site_id} category="GUARD_NET" triggerLabel="Install" />
@@ -185,6 +189,7 @@ export default async function CageDetailPage({
                     small
                   />
                   <RemoveNetDialog netId={cage.top_net_id} netCode={cage.top_net_code!} cageCode={cage.cage_code} />
+                  {canClean && <LogCageCleaningDialog netId={cage.top_net_id} netCode={cage.top_net_code!} small />}
                 </div>
               ) : (
                 <InstallNetDialog cageId={cageRow.id} cageCode={cage.cage_code} siteId={cage.site_id} category="TOP_NET" triggerLabel="Install" />

@@ -13,6 +13,7 @@ import { RegisterNetDialog } from "@/components/nets/register-net-dialog";
 import { ReactivateNetDialog } from "@/components/nets/reactivate-net-dialog";
 import { MarkFoundDialog } from "@/components/nets/mark-found-dialog";
 import { SendCleaningDialog } from "@/components/nets/send-cleaning-dialog";
+import { LogCageCleaningDialog } from "@/components/nets/log-cage-cleaning-dialog";
 import { CompleteCleaningDialog } from "@/components/nets/complete-cleaning-dialog";
 import { SendRepairDialog } from "@/components/nets/send-repair-dialog";
 import { CompleteRepairDialog } from "@/components/nets/complete-repair-dialog";
@@ -80,6 +81,9 @@ export function NetActionsBar({
       />,
     );
     buttons.push(<RemoveNetDialog key="remove" netId={net.id} netCode={net.net_code} cageCode={cageCode} />);
+    if (canClean) {
+      buttons.push(<LogCageCleaningDialog key="cage-clean" netId={net.id} netCode={net.net_code} small />);
+    }
   }
 
   if (["Available in Store", "Ready for Use", "Ready After Repair"].includes(net.status)) {

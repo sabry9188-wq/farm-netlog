@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getCleaningQueue, getCleaningHistory } from "@/lib/queries/workflows";
+import { getCleaningQueue, getCleaningHistory, getInCageCleaningLog } from "@/lib/queries/workflows";
 import { getCurrentProfile, canCleanRepair } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,12 @@ import Link from "next/link";
 
 export default async function CleaningPage() {
   const supabase = await createClient();
-  const [queue, history, profile] = await Promise.all([getCleaningQueue(supabase), getCleaningHistory(supabase), getCurrentProfile()]);
+  const [queue, history, inCageLog, profile] = await Promise.all([
+    getCleaningQueue(supabase),
+    getCleaningHistory(supabase),
+    getInCageCleaningLog(supabase),
+    getCurrentProfile(),
+  ]);
   const writable = canCleanRepair(profile?.role);
 
   return (
@@ -50,6 +55,53 @@ export default async function CleaningPage() {
                       <CompleteCleaningDialog netId={net.id} netCode={net.net_code} small />
                     </TableCell>
                   )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-base">In-Cage Cleaning Log ({inCageLog.length})</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Cage Number</TableHead>
+                <TableHead>Net (Tag) Number</TableHead>
+                <TableHead>Net Cleaning Date</TableHead>
+                <TableHead>No. of Cleaning Cycle</TableHead>
+                <TableHead>Cleaning Method</TableHead>
+                <TableHead>Cleaning Adequate</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {inCageLog.length === 0 && (
+                <TableRow><TableCell colSpan={6} className="py-10 text-center text-muted-foreground">No in-cage cleaning logged yet.</TableCell></TableRow>
+              )}
+              {inCageLog.map((r) => (
+                <TableRow key={r.id}>
+                  <TableCell className="font-mono font-semibold">{r.cages?.cage_code ?? "—"}</TableCell>
+                  <TableCell className="font-mono">
+                    {r.nets?.net_code ? (
+                      <Link href={`/nets/${r.nets.net_code}`} className="text-primary hover:underline">
+                        {r.nets.physical_number ?? r.nets.net_code}
+                      </Link>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
+                  <TableCell>{formatDate(r.start_date)}</TableCell>
+                  <TableCell>{r.cycle}</TableCell>
+                  <TableCell>{r.method ?? "—"}</TableCell>
+                  <TableCell>
+                    {r.adequate === null ? "—" : (
+                      <StatusBadge status={r.adequate ? "Yes" : "No"} color={r.adequate ? "green" : "red"} />
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

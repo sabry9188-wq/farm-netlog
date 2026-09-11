@@ -138,6 +138,24 @@ export async function sendToCleaningAction(input: {
   return res;
 }
 
+export async function logCageCleaningAction(input: {
+  netId: string;
+  cleaningDate?: string;
+  method?: string;
+  adequate: boolean;
+  remarks?: string;
+}): Promise<ActionResult> {
+  const res = await callRpc("fn_log_cage_cleaning", {
+    p_net_id: input.netId,
+    p_cleaning_date: input.cleaningDate ?? new Date().toISOString().slice(0, 10),
+    p_method: input.method ?? null,
+    p_adequate: input.adequate,
+    p_remarks: input.remarks ?? null,
+  });
+  revalidateCommon(["/cleaning", "/nets", "/cages", "/dashboard"]);
+  return res;
+}
+
 export async function completeCleaningAction(input: {
   netId: string;
   completionDate?: string;
