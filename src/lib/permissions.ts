@@ -20,7 +20,7 @@ export function canManageNets(role: UserRole | undefined): boolean {
 
 /** Edit cage production info (species, stocking date, etc). */
 export function canEditCageInfo(role: UserRole | undefined): boolean {
-  return role === "admin" || role === "manager" || role === "farm_specialist";
+  return role === "admin" || role === "manager" || role === "farm_specialist" || role === "storekeeper";
 }
 
 export function isAdmin(role: UserRole | undefined): boolean {
