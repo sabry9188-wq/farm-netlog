@@ -20,7 +20,9 @@ export async function updateCageInfoAction(input: {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: before } = await supabase.from("cages").select("*").eq("id", input.cageId).single();
+
+  const { data: after, error } = await supabase
     .from("cages")
     .update({
       species: input.species,
@@ -28,9 +30,19 @@ export async function updateCageInfoAction(input: {
       stocking_date: input.stockingDate,
       production_stage: input.productionStage,
     })
-    .eq("id", input.cageId);
+    .eq("id", input.cageId)
+    .select()
+    .single();
 
   if (error) return { error: error.message };
+
+  await supabase.rpc("fn_write_audit", {
+    p_action: "EDIT_CAGE",
+    p_entity_type: "cages",
+    p_entity_id: input.cageId,
+    p_old: before ?? null,
+    p_new: after ?? null,
+  });
 
   revalidatePath(input.path);
   revalidatePath("/cages", "layout");

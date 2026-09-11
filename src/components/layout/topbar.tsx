@@ -17,6 +17,7 @@ import {
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { EditProfileDialog } from "@/components/layout/edit-profile-dialog";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { NotificationBell } from "@/components/layout/notification-bell";
 import { signOutAction } from "@/lib/actions/auth";
 import { ROLE_LABELS } from "@/lib/constants";
 import type { Profile, UserRole } from "@/lib/types/database";
@@ -83,6 +84,7 @@ export function Topbar({
 
       <div className="flex flex-1 justify-end items-center gap-2">
         <ThemeToggle />
+        {profile && <NotificationBell initialLastSeenAt={profile.last_seen_notifications_at} />}
         <Button variant="ghost" size="icon" className="relative" asChild>
           <a href="/alerts">
             <BellRing className="size-5" />

@@ -16,6 +16,7 @@ export interface Profile {
   status: UserStatus;
   can_approve_disposal: boolean;
   avatar_url: string | null;
+  last_seen_notifications_at: string;
   created_at: string;
 }
 
