@@ -16,7 +16,7 @@ export default async function MovementsPage({
 
   let query = supabase
     .from("net_movements")
-    .select("*, nets(net_code, category)")
+    .select("*, nets(net_code, physical_number, category)")
     .order("movement_date", { ascending: false })
     .limit(300);
 
@@ -24,7 +24,10 @@ export default async function MovementsPage({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rows = (movements as any[]) ?? [];
   if (q) {
-    rows = rows.filter((r) => r.nets?.net_code?.toLowerCase().includes(q.toLowerCase()));
+    const needle = q.toLowerCase();
+    rows = rows.filter(
+      (r) => r.nets?.net_code?.toLowerCase().includes(needle) || r.nets?.physical_number?.toLowerCase().includes(needle),
+    );
   }
 
   return (
@@ -37,6 +40,7 @@ export default async function MovementsPage({
               <TableRow>
                 <TableHead>Date</TableHead>
                 <TableHead>Net ID</TableHead>
+                <TableHead>Physical #</TableHead>
                 <TableHead>From</TableHead>
                 <TableHead>To</TableHead>
                 <TableHead>Status Change</TableHead>
@@ -45,7 +49,7 @@ export default async function MovementsPage({
             </TableHeader>
             <TableBody>
               {rows.length === 0 && (
-                <TableRow><TableCell colSpan={6} className="py-10 text-center text-muted-foreground">No movements recorded yet.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="py-10 text-center text-muted-foreground">No movements recorded yet.</TableCell></TableRow>
               )}
               {rows.map((m) => (
                 <TableRow key={m.id}>
@@ -53,6 +57,7 @@ export default async function MovementsPage({
                   <TableCell className="font-mono font-semibold">
                     <Link href={`/nets/${m.nets?.net_code}`} className="text-primary hover:underline">{m.nets?.net_code}</Link>
                   </TableCell>
+                  <TableCell className="text-muted-foreground">{m.nets?.physical_number ?? "—"}</TableCell>
                   <TableCell className="text-muted-foreground">{m.from_location ?? "—"}</TableCell>
                   <TableCell className="font-medium">{m.to_location}</TableCell>
                   <TableCell><StatusBadge status={m.to_status} /></TableCell>

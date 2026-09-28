@@ -25,6 +25,7 @@ function categoryInfo(cage: VCageCurrentState, category: NetCategory) {
     return {
       netId: cage.main_net_id,
       netCode: cage.main_net_code,
+      physicalNumber: cage.main_net_physical_number,
       mesh: cage.main_net_mesh,
       installDate: cage.main_net_installation_date,
       daysRemaining: cage.main_net_days_remaining,
@@ -34,6 +35,7 @@ function categoryInfo(cage: VCageCurrentState, category: NetCategory) {
     return {
       netId: cage.guard_net_id,
       netCode: cage.guard_net_code,
+      physicalNumber: cage.guard_net_physical_number,
       mesh: "80 mm",
       installDate: cage.guard_net_installation_date,
       daysRemaining: cage.guard_net_days_remaining,
@@ -42,6 +44,7 @@ function categoryInfo(cage: VCageCurrentState, category: NetCategory) {
   return {
     netId: cage.top_net_id,
     netCode: cage.top_net_code,
+    physicalNumber: cage.top_net_physical_number,
     mesh: null as string | null,
     installDate: cage.top_net_installation_date,
     daysRemaining: null as number | null, // condition-based, no fixed schedule
@@ -117,9 +120,14 @@ export default async function InstallChangeNetPage({
                           <TableCell className="text-muted-foreground">{cage.site_name}</TableCell>
                           <TableCell className="font-mono">
                             {info.netCode ? (
-                              <Link href={`/nets/${info.netCode}`} className="text-primary hover:underline">
-                                {info.netCode}
-                              </Link>
+                              <>
+                                <Link href={`/nets/${info.netCode}`} className="text-primary hover:underline">
+                                  {info.netCode}
+                                </Link>
+                                {info.physicalNumber && (
+                                  <span className="ml-2 text-xs text-muted-foreground">#{info.physicalNumber}</span>
+                                )}
+                              </>
                             ) : (
                               <span className="text-muted-foreground italic">None</span>
                             )}

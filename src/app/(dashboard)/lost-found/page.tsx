@@ -46,6 +46,7 @@ export default async function LostFoundPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Net ID</TableHead>
+                    <TableHead>Physical #</TableHead>
                     <TableHead>Site</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Date Lost</TableHead>
@@ -69,6 +70,7 @@ export default async function LostFoundPage() {
                           {net.net_code}
                         </Link>
                       </TableCell>
+                      <TableCell className="text-muted-foreground">{net.physical_number ?? "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{net.sites?.site_code}</TableCell>
                       <TableCell>{CATEGORY_SHORT_LABELS[net.category]}</TableCell>
                       <TableCell>{record ? formatDate(record.date_lost) : "—"}</TableCell>
@@ -97,6 +99,7 @@ export default async function LostFoundPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Net ID</TableHead>
+                    <TableHead>Physical #</TableHead>
                     <TableHead>Site</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Disposal Date</TableHead>
@@ -120,6 +123,7 @@ export default async function LostFoundPage() {
                           {net.net_code}
                         </Link>
                       </TableCell>
+                      <TableCell className="text-muted-foreground">{net.physical_number ?? "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{net.sites?.site_code}</TableCell>
                       <TableCell>{CATEGORY_SHORT_LABELS[net.category]}</TableCell>
                       <TableCell>{record ? formatDate(record.disposal_date) : "—"}</TableCell>

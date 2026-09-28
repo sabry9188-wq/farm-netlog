@@ -175,6 +175,9 @@ export default async function DashboardPage() {
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="font-mono font-bold text-foreground">{a.cage_code}</span>
                     <span className="truncate font-mono text-muted-foreground">{a.net_code}</span>
+                    {a.physical_number && (
+                      <span className="hidden shrink-0 font-mono text-xs text-muted-foreground sm:inline">#{a.physical_number}</span>
+                    )}
                     <span className="hidden text-xs text-muted-foreground sm:inline">{a.site_name}</span>
                   </div>
                   <AlertBadge daysRemaining={a.days_remaining} />

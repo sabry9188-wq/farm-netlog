@@ -47,7 +47,7 @@ export async function getRepairQueue(supabase: SB) {
 export async function getCleaningHistory(supabase: SB) {
   const { data } = await supabase
     .from("cleaning_records")
-    .select("*, nets(net_code, category, site_id, sites(site_code))")
+    .select("*, nets(net_code, physical_number, category, site_id, sites(site_code))")
     .order("start_date", { ascending: false })
     .limit(200);
   return data ?? [];
@@ -93,7 +93,7 @@ export async function getInCageCleaningLog(supabase: SB): Promise<InCageCleaning
 export async function getRepairHistory(supabase: SB) {
   const { data } = await supabase
     .from("repair_records")
-    .select("*, nets(net_code, category, site_id, sites(site_code))")
+    .select("*, nets(net_code, physical_number, category, site_id, sites(site_code))")
     .order("repair_start", { ascending: false })
     .limit(200);
   return data ?? [];

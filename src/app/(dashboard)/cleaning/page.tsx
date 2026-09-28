@@ -30,6 +30,7 @@ export default async function CleaningPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Net ID</TableHead>
+                <TableHead>Physical #</TableHead>
                 <TableHead>Site</TableHead>
                 <TableHead>Sent for cleaning</TableHead>
                 <TableHead>Method</TableHead>
@@ -39,13 +40,14 @@ export default async function CleaningPage() {
             </TableHeader>
             <TableBody>
               {queue.length === 0 && (
-                <TableRow><TableCell colSpan={6} className="py-10 text-center text-muted-foreground">Nothing in the cleaning queue.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="py-10 text-center text-muted-foreground">Nothing in the cleaning queue.</TableCell></TableRow>
               )}
               {queue.map(({ net, record }) => (
                 <TableRow key={net.id}>
                   <TableCell className="font-mono font-semibold">
                     <Link href={`/nets/${net.net_code}`} className="text-primary hover:underline">{net.net_code}</Link>
                   </TableCell>
+                  <TableCell className="text-muted-foreground">{net.physical_number ?? "—"}</TableCell>
                   <TableCell className="text-muted-foreground">{net.sites?.site_code}</TableCell>
                   <TableCell>{record ? formatDate(record.start_date) : "—"}</TableCell>
                   <TableCell>{record?.method ?? "—"}</TableCell>
@@ -120,6 +122,7 @@ export default async function CleaningPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Net ID</TableHead>
+                <TableHead>Physical #</TableHead>
                 <TableHead>Start</TableHead>
                 <TableHead>Completed</TableHead>
                 <TableHead>Duration</TableHead>
@@ -134,6 +137,7 @@ export default async function CleaningPage() {
                   <TableCell className="font-mono font-semibold">
                     <Link href={`/nets/${r.nets?.net_code}`} className="text-primary hover:underline">{r.nets?.net_code}</Link>
                   </TableCell>
+                  <TableCell className="text-muted-foreground">{r.nets?.physical_number ?? "—"}</TableCell>
                   <TableCell>{formatDate(r.start_date)}</TableCell>
                   <TableCell>{r.completion_date ? formatDate(r.completion_date) : <StatusBadge status="In progress" color="purple" />}</TableCell>
                   <TableCell>{r.completion_date ? `${daysBetween(r.start_date, r.completion_date)} days` : "—"}</TableCell>

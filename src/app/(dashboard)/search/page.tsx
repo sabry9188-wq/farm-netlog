@@ -41,7 +41,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             {nets.map((n) => (
               <Link key={n.id} href={`/nets/${n.net_code}`} className="-mx-2 flex items-center justify-between rounded-lg px-2 py-2.5 text-sm hover:bg-muted/50">
                 <div>
-                  <p className="font-mono font-semibold">{n.net_code}</p>
+                  <p className="font-mono font-semibold">
+                    {n.net_code}
+                    {n.physical_number && <span className="ml-2 font-normal text-muted-foreground">#{n.physical_number}</span>}
+                  </p>
                   <p className="text-xs text-muted-foreground">{n.sites?.site_code} · {n.mesh_size ?? "—"}</p>
                 </div>
                 <StatusBadge status={n.status} />

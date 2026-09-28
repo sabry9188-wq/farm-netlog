@@ -58,6 +58,9 @@ export default async function AlertsPage() {
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="font-mono font-bold">{a.cage_code}</span>
                       <span className="truncate font-mono text-muted-foreground">{a.net_code}</span>
+                      {a.physical_number && (
+                        <span className="hidden shrink-0 font-mono text-xs text-muted-foreground sm:inline">#{a.physical_number}</span>
+                      )}
                       <span className="hidden shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground sm:inline">
                         {CATEGORY_SHORT_LABELS[a.category]}
                       </span>

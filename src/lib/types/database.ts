@@ -218,6 +218,7 @@ export interface VNetAlertStatus {
   days_in_water: number;
   days_remaining: number;
   alert_color: AlertColor;
+  physical_number: string | null;
 }
 
 export interface VCageCurrentState {
