@@ -19,7 +19,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       supabase
         .from("nets")
         .select("*, sites(site_code)")
-        .or(`net_code.ilike.%${query}%,mesh_size.ilike.%${query}%,status.ilike.%${query}%,condition.ilike.%${query}%`)
+        .or(
+          `net_code.ilike.%${query}%,physical_number.ilike.%${query}%,mesh_size.ilike.%${query}%,status.ilike.%${query}%,condition.ilike.%${query}%`,
+        )
         .limit(50),
       supabase.from("v_cage_current_state").select("*").ilike("cage_code", `%${query}%`).limit(50),
     ]);

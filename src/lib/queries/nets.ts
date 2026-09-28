@@ -35,7 +35,7 @@ export async function getNets(supabase: SB, filters: NetFilters = {}): Promise<N
   if (filters.mesh) query = query.eq("mesh_size", filters.mesh);
   if (filters.status) query = query.eq("status", filters.status);
   if (filters.condition) query = query.eq("condition", filters.condition);
-  if (filters.q) query = query.ilike("net_code", `%${filters.q}%`);
+  if (filters.q) query = query.or(`net_code.ilike.%${filters.q}%,physical_number.ilike.%${filters.q}%`);
   if (filters.siteCode) {
     const { data: site } = await supabase.from("sites").select("id").eq("site_code", filters.siteCode).single();
     if (site) query = query.eq("site_id", site.id);
