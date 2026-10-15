@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { updateUserRoleAction, setUserStatusAction, setCanApproveDisposalAction } from "@/lib/actions/users";
+import { SetPasswordDialog } from "./set-password-dialog";
 import { ROLE_LABELS } from "@/lib/constants";
 import type { Profile, UserRole } from "@/lib/types/database";
 
@@ -39,6 +40,7 @@ export function UserRowActions({ user, isSelf }: { user: Profile; isSelf: boolea
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-3">
+      {!isSelf && <SetPasswordDialog user={user} />}
       {user.role === "storekeeper" && (
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Switch checked={user.can_approve_disposal} onCheckedChange={toggleApprove} disabled={isPending} />

@@ -62,6 +62,21 @@ export async function inviteUserAction(input: { email: string; fullName: string;
   return { data: true };
 }
 
+// Lets an Admin give someone a new password directly — no email involved —
+// for when a user is locked out and the recovery email can't be delivered.
+export async function setUserPasswordAction(input: { userId: string; password: string }) {
+  const check = await requireAdmin();
+  if (!check.ok) return { error: check.error };
+
+  if (input.password.length < 8) return { error: "Password must be at least 8 characters." };
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.updateUserById(input.userId, { password: input.password });
+  if (error) return { error: error.message };
+
+  return { data: true };
+}
+
 export async function updateUserRoleAction(input: { userId: string; role: UserRole }) {
   const check = await requireAdmin();
   if (!check.ok) return { error: check.error };

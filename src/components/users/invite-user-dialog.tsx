@@ -22,7 +22,7 @@ import { createUserWithPasswordAction, inviteUserAction } from "@/lib/actions/us
 import { ROLE_LABELS } from "@/lib/constants";
 import type { UserRole } from "@/lib/types/database";
 
-function generatePassword() {
+export function generatePassword() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
   let out = "";
   for (let i = 0; i < 12; i++) out += chars[Math.floor(Math.random() * chars.length)];
