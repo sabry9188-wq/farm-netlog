@@ -29,9 +29,10 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   // Reachable without a session — the password-recovery email link signs
-  // the visitor in via /auth/callback on its way to /reset-password, so
-  // that route must stay public rather than being bounced to /dashboard.
-  const isPublicRoute = ["/login", "/forgot-password", "/reset-password", "/auth/callback"].some(
+  // the visitor in via /auth/confirm (or /auth/callback) on its way to
+  // /reset-password, so that route must stay public rather than being
+  // bounced to /dashboard.
+  const isPublicRoute = ["/login", "/forgot-password", "/reset-password", "/auth/callback", "/auth/confirm"].some(
     (path) => pathname.startsWith(path),
   );
   // Only these should redirect an already-signed-in visitor away.
