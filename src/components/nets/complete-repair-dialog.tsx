@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { completeRepairAction } from "@/lib/actions/nets";
 import { createClient } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/compress-image";
 
 const CONDITIONS = ["Excellent", "Good", "Fair", "Poor"];
 
@@ -49,9 +50,11 @@ export function CompleteRepairDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  function onPickSheet(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function onPickSheet(e: React.ChangeEvent<HTMLInputElement>) {
+    const picked = e.target.files?.[0];
+    if (!picked) return;
+    // Shrink before the size check so full-resolution phone photos are accepted.
+    const file = await compressImage(picked);
     if (file.size > 8 * 1024 * 1024) {
       toast.error("Photo must be under 8MB.");
       return;
