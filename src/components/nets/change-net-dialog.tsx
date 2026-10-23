@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { fetchEligibleNetsAction, changeNetAction } from "@/lib/actions/nets";
-import { REMOVAL_REASONS, CONDITIONS, CATEGORY_LABELS } from "@/lib/constants";
+import { REMOVAL_REASONS, CONDITIONS, CATEGORY_LABELS, CHANGE_DESTINATIONS } from "@/lib/constants";
 import type { Net, NetCategory } from "@/lib/types/database";
 
 export function ChangeNetDialog({
@@ -43,6 +43,7 @@ export function ChangeNetDialog({
   const [newNetId, setNewNetId] = useState("");
   const [reason, setReason] = useState("Scheduled 60-day change");
   const [condition, setCondition] = useState("Good");
+  const [destination, setDestination] = useState<string>("Net Store");
   const [remarks, setRemarks] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -69,6 +70,7 @@ export function ChangeNetDialog({
         removalReason: reason,
         conditionAtRemoval: condition,
         remarks,
+        destination,
       });
       if (res.error) {
         toast.error(res.error);
@@ -77,6 +79,7 @@ export function ChangeNetDialog({
       toast.success(`${cageCode} changed to a new net.`);
       setOpen(false);
       setNewNetId("");
+      setDestination("Net Store");
       setRemarks("");
       router.refresh();
     });
@@ -96,7 +99,8 @@ export function ChangeNetDialog({
         <DialogHeader>
           <DialogTitle>Change {CATEGORY_LABELS[category]} — {cageCode}</DialogTitle>
           <DialogDescription>
-            Takes {oldNetCode} out and installs a replacement in one step. The old net returns to the Net Store.
+            Takes {oldNetCode} out and installs a replacement in one step. Choose where the old net goes — the Net
+            Store, under the cage, or the drying area.
           </DialogDescription>
         </DialogHeader>
 
@@ -123,6 +127,23 @@ export function ChangeNetDialog({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Where does {oldNetCode} go?</Label>
+            <Select value={destination} onValueChange={setDestination}>
+              <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {CHANGE_DESTINATIONS.map((d) => (
+                  <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {destination !== "Net Store" && (
+              <p className="text-xs text-muted-foreground">
+                It will wait on the Seabed &amp; Drying page until you retrieve it.
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5">

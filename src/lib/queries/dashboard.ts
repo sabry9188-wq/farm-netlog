@@ -14,6 +14,7 @@ export interface DashboardData {
     inStore: number;
     cleaning: number;
     repair: number;
+    holding: number;
     damaged: number;
     lost: number;
     disposed: number;
@@ -61,6 +62,7 @@ export async function getDashboardData(supabase: SupabaseClient<any>): Promise<D
     inStore: 0,
     cleaning: 0,
     repair: 0,
+    holding: 0,
     damaged: 0,
     lost: 0,
     disposed: 0,
@@ -81,6 +83,7 @@ export async function getDashboardData(supabase: SupabaseClient<any>): Promise<D
       totals.inStore += row.qty;
     if (row.status === "Sent for Cleaning" || row.status === "Under Cleaning") totals.cleaning += row.qty;
     if (row.status === "Under Repair") totals.repair += row.qty;
+    if (row.status === "Under Cage (Seabed)" || row.status === "Drying") totals.holding += row.qty;
     if (row.status === "Damaged") totals.damaged += row.qty;
     if (row.status === "Lost") totals.lost += row.qty;
     if (row.status === "Disposed") totals.disposed += row.qty;

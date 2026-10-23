@@ -17,6 +17,8 @@ const STATUSES = [
   "Under Repair",
   "Ready After Repair",
   "Reserved",
+  "Under Cage (Seabed)",
+  "Drying",
   "Lost",
   "Damaged",
   "Beyond Repair",

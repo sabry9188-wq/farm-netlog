@@ -15,6 +15,7 @@ import {
   Settings,
   ShieldCheck,
   PackageSearch,
+  Anchor,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,6 +36,7 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   Settings,
   ShieldCheck,
   PackageSearch,
+  Anchor,
 };
 
 export function NavIcon({ name, className }: { name: string; className?: string }) {

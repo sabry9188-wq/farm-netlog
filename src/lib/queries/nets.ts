@@ -86,6 +86,38 @@ export async function getNetProfile(supabase: SB, netCode: string): Promise<NetP
   };
 }
 
+export interface HoldingNetRow {
+  net: NetWithSite;
+  // When it was dropped under the cage / put out to dry — the latest
+  // movement into its current status.
+  since: string | null;
+}
+
+export async function getHoldingNets(supabase: SB): Promise<HoldingNetRow[]> {
+  const { data: nets } = await supabase
+    .from("nets")
+    .select("*, sites(site_code, site_name)")
+    .in("status", ["Under Cage (Seabed)", "Drying"])
+    .order("net_code");
+  const rows = (nets as NetWithSite[]) ?? [];
+  const netIds = rows.map((n) => n.id);
+  const { data: movements } = netIds.length
+    ? await supabase
+        .from("net_movements")
+        .select("net_id, to_status, movement_date")
+        .in("net_id", netIds)
+        .order("movement_date", { ascending: false })
+    : { data: [] };
+
+  const sinceByNet = new Map<string, string>();
+  const statusByNet = new Map(rows.map((n) => [n.id, n.status]));
+  for (const m of (movements as Pick<NetMovement, "net_id" | "to_status" | "movement_date">[]) ?? []) {
+    if (!sinceByNet.has(m.net_id) && m.to_status === statusByNet.get(m.net_id)) sinceByNet.set(m.net_id, m.movement_date);
+  }
+
+  return rows.map((n) => ({ net: n, since: sinceByNet.get(n.id) ?? null }));
+}
+
 export interface LostNetRow {
   net: NetWithSite;
   record: LostRecord | null;

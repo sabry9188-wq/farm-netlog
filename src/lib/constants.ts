@@ -23,12 +23,27 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 
 export const DESTINATION_OPTIONS = [
   "Net Store",
+  "Under Cage",
+  "Drying",
   "Cleaning",
   "Repair",
   "Another Cage",
   "Disposal",
   "Lost",
 ] as const;
+
+// Where the outgoing net goes on a Change Net — heavy fouled nets are often
+// dropped under the cage until the growth dies off, or laid out to dry.
+export const CHANGE_DESTINATIONS = [
+  { value: "Net Store", label: "Net Store" },
+  { value: "Under Cage", label: "Under the cage (seabed)" },
+  { value: "Drying", label: "Drying area" },
+] as const;
+
+// Temporary holding spots a net waits in before it's retrieved.
+export const HOLDING_STATUSES = ["Under Cage (Seabed)", "Drying"] as const;
+
+export const RETRIEVE_DESTINATIONS = ["Net Store", "Drying", "Cleaning", "Repair"] as const;
 
 export const AVAILABLE_STATUSES = ["Available in Store", "Ready for Use", "Ready After Repair"] as const;
 
@@ -59,6 +74,7 @@ export const NAV_ITEMS = [
   { href: "/cages", label: "Cage Farms", icon: "Building2" },
   { href: "/nets", label: "Net Inventory", icon: "Waves" },
   { href: "/store", label: "Net Store", icon: "Package" },
+  { href: "/holding", label: "Seabed & Drying", icon: "Anchor" },
   { href: "/install", label: "Install / Change Net", icon: "ArrowLeftRight" },
   { href: "/cleaning", label: "Cleaning", icon: "Sparkles" },
   { href: "/repair", label: "Repair", icon: "Wrench" },

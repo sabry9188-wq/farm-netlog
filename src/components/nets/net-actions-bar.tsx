@@ -20,7 +20,9 @@ import { CompleteRepairDialog } from "@/components/nets/complete-repair-dialog";
 import { DisposeNetDialog } from "@/components/nets/dispose-net-dialog";
 import { MarkLostDialog } from "@/components/nets/mark-lost-dialog";
 import { RemoveNetDialog } from "@/components/nets/remove-net-dialog";
+import { RetrieveNetDialog } from "@/components/nets/retrieve-net-dialog";
 import { setReservedAction } from "@/lib/actions/nets";
+import { HOLDING_STATUSES } from "@/lib/constants";
 import { canInstallChangeNets, canCleanRepair, canManageNets } from "@/lib/permissions";
 import type { Net, UserRole } from "@/lib/types/database";
 
@@ -118,6 +120,12 @@ export function NetActionsBar({
 
   if (canClean && (net.status === "Sent for Cleaning" || net.status === "Under Cleaning")) {
     buttons.push(<CompleteCleaningDialog key="complete-clean" netId={net.id} netCode={net.net_code} small />);
+  }
+
+  if (canInstall && (HOLDING_STATUSES as readonly string[]).includes(net.status)) {
+    buttons.push(
+      <RetrieveNetDialog key="retrieve" netId={net.id} netCode={net.net_code} status={net.status} currentCondition={net.condition} small />,
+    );
   }
 
   if (canClean && net.status === "Under Repair") {

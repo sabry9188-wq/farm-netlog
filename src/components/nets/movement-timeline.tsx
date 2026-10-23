@@ -8,6 +8,8 @@ import {
   Ghost,
   Bookmark,
   ArrowRightCircle,
+  ArrowDownToLine,
+  Sun,
 } from "lucide-react";
 import { formatDate } from "@/lib/calculations";
 import type { NetMovement } from "@/lib/types/database";
@@ -25,6 +27,8 @@ const STATUS_ICON: Record<string, typeof Package> = {
   Damaged: Wrench,
   "Beyond Repair": Wrench,
   Disposed: Trash2,
+  "Under Cage (Seabed)": ArrowDownToLine,
+  Drying: Sun,
 };
 
 export function MovementTimeline({ movements }: { movements: NetMovement[] }) {

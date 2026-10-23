@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Package, Sparkles, Wrench, Bookmark, AlertOctagon, Ghost, Trash2, Bird, Shield, Waves } from "lucide-react";
+import { Package, Sparkles, Wrench, Bookmark, AlertOctagon, Ghost, Trash2, Bird, Shield, Waves, Anchor } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getNets } from "@/lib/queries/nets";
 import { getDashboardData } from "@/lib/queries/dashboard";
@@ -46,6 +46,7 @@ export default async function NetStorePage({
         <KpiCard label="Available" value={totals.inStore} icon={Package} accent="green" />
         <KpiCard label="Under Cleaning" value={totals.cleaning} icon={Sparkles} accent="purple" />
         <KpiCard label="Under Repair" value={totals.repair} icon={Wrench} accent="orange" />
+        <KpiCard label="Seabed / Drying" value={totals.holding} icon={Anchor} accent="orange" href="/holding" />
         <KpiCard label="Reserved" value={0} icon={Bookmark} accent="ocean" hint="See filters" />
         <KpiCard label="Damaged" value={totals.damaged} icon={AlertOctagon} accent="red" />
         <KpiCard label="Lost" value={totals.lost} icon={Ghost} accent="grey" />

@@ -92,4 +92,6 @@ export const STATUS_COLOR_FALLBACK: Record<string, string> = {
   Damaged: "red",
   "Beyond Repair": "red",
   Disposed: "grey",
+  "Under Cage (Seabed)": "orange",
+  Drying: "yellow",
 };

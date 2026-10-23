@@ -98,7 +98,7 @@ export async function removeNetAction(input: {
     p_destination: input.destination,
     p_remarks: input.remarks ?? null,
   });
-  revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/cleaning", "/repair", "/movements"]);
+  revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/cleaning", "/repair", "/movements", "/holding"]);
   return res;
 }
 
@@ -109,6 +109,7 @@ export async function changeNetAction(input: {
   conditionAtRemoval?: string;
   changeDate?: string;
   remarks?: string;
+  destination?: string;
 }): Promise<ActionResult> {
   const res = await callRpc("fn_change_net", {
     p_old_net_id: input.oldNetId,
@@ -117,8 +118,27 @@ export async function changeNetAction(input: {
     p_condition_at_removal: input.conditionAtRemoval ?? null,
     p_change_date: input.changeDate ?? new Date().toISOString().slice(0, 10),
     p_remarks: input.remarks ?? null,
+    p_destination: input.destination ?? "Net Store",
   });
-  revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/movements", "/install"]);
+  revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/movements", "/install", "/holding"]);
+  return res;
+}
+
+export async function retrieveNetAction(input: {
+  netId: string;
+  retrieveDate?: string;
+  destination: string;
+  condition?: string;
+  remarks?: string;
+}): Promise<ActionResult> {
+  const res = await callRpc("fn_retrieve_net", {
+    p_net_id: input.netId,
+    p_retrieve_date: input.retrieveDate ?? new Date().toISOString().slice(0, 10),
+    p_destination: input.destination,
+    p_condition: input.condition ?? null,
+    p_remarks: input.remarks ?? null,
+  });
+  revalidateCommon(["/holding", "/nets", "/store", "/dashboard", "/cleaning", "/repair", "/movements"]);
   return res;
 }
 
