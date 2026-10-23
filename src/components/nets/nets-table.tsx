@@ -41,6 +41,7 @@ export function NetsTable({
             {showCategory && <TableHead>Category</TableHead>}
             <TableHead>Mesh</TableHead>
             <TableHead>Condition</TableHead>
+            <TableHead>Fouling</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Location</TableHead>
             {(canManage || isAdmin || canMarkFound) && <TableHead className="text-right">Actions</TableHead>}
@@ -59,6 +60,7 @@ export function NetsTable({
               {showCategory && <TableCell>{CATEGORY_SHORT_LABELS[n.category]}</TableCell>}
               <TableCell>{n.mesh_size ?? "—"}</TableCell>
               <TableCell>{n.condition}</TableCell>
+              <TableCell>{n.fouling_level ?? "—"}</TableCell>
               <TableCell>
                 <StatusBadge status={n.status} />
               </TableCell>

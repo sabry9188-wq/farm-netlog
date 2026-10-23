@@ -15,6 +15,7 @@ const TABLES = [
   "profiles",
   "mesh_sizes",
   "net_conditions",
+  "fouling_levels",
   "net_statuses",
   "removal_reasons",
   "repair_types",

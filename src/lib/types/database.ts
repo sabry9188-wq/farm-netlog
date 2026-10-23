@@ -97,6 +97,7 @@ export interface Net {
   current_location: string;
   current_cage_id: string | null;
   remarks: string | null;
+  fouling_level: string | null;
   is_demo: boolean;
   created_by: string | null;
   created_at: string;
@@ -112,6 +113,7 @@ export interface NetInstallation {
   removal_reason: string | null;
   condition_at_installation: string | null;
   condition_at_removal: string | null;
+  fouling_at_removal: string | null;
   destination: string | null;
   installed_by: string | null;
   removed_by: string | null;
@@ -143,6 +145,7 @@ export interface CleaningRecord {
   method: string | null;
   condition_before: string | null;
   condition_after: string | null;
+  fouling_before: string | null;
   adequate: boolean | null;
   performed_by: string | null;
   remarks: string | null;

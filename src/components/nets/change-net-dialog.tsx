@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { FoulingSelect } from "@/components/nets/fouling-select";
 import { fetchEligibleNetsAction, changeNetAction } from "@/lib/actions/nets";
 import { REMOVAL_REASONS, CONDITIONS, CATEGORY_LABELS, CHANGE_DESTINATIONS } from "@/lib/constants";
 import type { Net, NetCategory } from "@/lib/types/database";
@@ -44,6 +45,7 @@ export function ChangeNetDialog({
   const [reason, setReason] = useState("Scheduled 60-day change");
   const [condition, setCondition] = useState("Good");
   const [destination, setDestination] = useState<string>("Net Store");
+  const [fouling, setFouling] = useState("");
   const [remarks, setRemarks] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -71,15 +73,18 @@ export function ChangeNetDialog({
         conditionAtRemoval: condition,
         remarks,
         destination,
+        foulingAtRemoval: fouling || undefined,
       });
       if (res.error) {
         toast.error(res.error);
         return;
       }
       toast.success(`${cageCode} changed to a new net.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       setNewNetId("");
       setDestination("Net Store");
+      setFouling("");
       setRemarks("");
       router.refresh();
     });
@@ -128,6 +133,8 @@ export function ChangeNetDialog({
               </SelectContent>
             </Select>
           </div>
+
+          <FoulingSelect label={`Fouling of ${oldNetCode} at removal`} value={fouling} onChange={setFouling} />
 
           <div className="space-y-1.5">
             <Label>Where does {oldNetCode} go?</Label>

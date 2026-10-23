@@ -19,12 +19,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { removeNetAction } from "@/lib/actions/nets";
 import { DESTINATION_OPTIONS, REMOVAL_REASONS, CONDITIONS } from "@/lib/constants";
+import { FoulingSelect } from "@/components/nets/fouling-select";
 
 export function RemoveNetDialog({ netId, netCode, cageCode }: { netId: string; netCode: string; cageCode: string }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [condition, setCondition] = useState("Good");
   const [destination, setDestination] = useState<string>("Net Store");
+  const [fouling, setFouling] = useState("");
   const [remarks, setRemarks] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -35,12 +37,20 @@ export function RemoveNetDialog({ netId, netCode, cageCode }: { netId: string; n
       return;
     }
     startTransition(async () => {
-      const res = await removeNetAction({ netId, removalReason: reason, condition, destination, remarks });
+      const res = await removeNetAction({
+        netId,
+        removalReason: reason,
+        condition,
+        destination,
+        remarks,
+        foulingAtRemoval: fouling || undefined,
+      });
       if (res.error) {
         toast.error(res.error);
         return;
       }
       toast.success(`${netCode} removed from ${cageCode}.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       router.refresh();
     });
@@ -112,6 +122,8 @@ export function RemoveNetDialog({ netId, netCode, cageCode }: { netId: string; n
               </Select>
             </div>
           </div>
+
+          <FoulingSelect label="Fouling at removal" value={fouling} onChange={setFouling} />
 
           <div className="space-y-1.5">
             <Label htmlFor="remove-remarks">Remarks (optional)</Label>

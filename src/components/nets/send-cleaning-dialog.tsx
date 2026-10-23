@@ -18,22 +18,25 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { sendToCleaningAction } from "@/lib/actions/nets";
+import { FoulingSelect } from "@/components/nets/fouling-select";
 
 export function SendCleaningDialog({ netId, netCode, small }: { netId: string; netCode: string; small?: boolean }) {
   const [open, setOpen] = useState(false);
   const [method, setMethod] = useState("");
+  const [fouling, setFouling] = useState("");
   const [remarks, setRemarks] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   function submit() {
     startTransition(async () => {
-      const res = await sendToCleaningAction({ netId, method, remarks });
+      const res = await sendToCleaningAction({ netId, method, remarks, foulingBefore: fouling || undefined });
       if (res.error) {
         toast.error(res.error);
         return;
       }
       toast.success(`${netCode} sent for cleaning.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       router.refresh();
     });
@@ -56,6 +59,7 @@ export function SendCleaningDialog({ netId, netCode, small }: { netId: string; n
             <Label>Cleaning method</Label>
             <Input value={method} onChange={(e) => setMethod(e.target.value)} placeholder="e.g. Pressure wash" />
           </div>
+          <FoulingSelect label="Fouling before cleaning" value={fouling} onChange={setFouling} />
           <div className="space-y-1.5">
             <Label>Remarks</Label>
             <Textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={2} />

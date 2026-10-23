@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { logCageCleaningAction } from "@/lib/actions/nets";
+import { FoulingSelect } from "@/components/nets/fouling-select";
 
 const CLEANING_METHODS = ["Net Cleaning Machine", "Brushing"];
 const OTHER_METHOD = "__other__";
@@ -31,6 +32,7 @@ export function LogCageCleaningDialog({ netId, netCode, small }: { netId: string
   const [methodSelect, setMethodSelect] = useState("");
   const [methodOther, setMethodOther] = useState("");
   const [adequate, setAdequate] = useState("yes");
+  const [fouling, setFouling] = useState("");
   const [remarks, setRemarks] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -49,15 +51,18 @@ export function LogCageCleaningDialog({ netId, netCode, small }: { netId: string
         method: method || undefined,
         adequate: adequate === "yes",
         remarks: remarks || undefined,
+        foulingBefore: fouling || undefined,
       });
       if (res.error) {
         toast.error(res.error);
         return;
       }
       toast.success(`Cleaning logged for ${netCode}.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       setMethodSelect("");
       setMethodOther("");
+      setFouling("");
       setRemarks("");
       router.refresh();
     });
@@ -107,6 +112,7 @@ export function LogCageCleaningDialog({ netId, netCode, small }: { netId: string
               />
             )}
           </div>
+          <FoulingSelect label="Fouling before cleaning" value={fouling} onChange={setFouling} />
           <div className="space-y-1.5">
             <Label>Cleaning adequate?</Label>
             <Select value={adequate} onValueChange={setAdequate}>

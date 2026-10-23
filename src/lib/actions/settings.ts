@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 const LOOKUP_TABLES = [
   "mesh_sizes",
   "net_conditions",
+  "fouling_levels",
   "net_statuses",
   "removal_reasons",
   "repair_types",

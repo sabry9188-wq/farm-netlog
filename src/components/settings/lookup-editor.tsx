@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { addLookupItemAction, toggleLookupItemAction } from "@/lib/actions/settings";
 import type { LookupRow } from "@/lib/types/database";
 
-const TABLES = ["mesh_sizes", "net_conditions", "net_statuses", "removal_reasons", "repair_types", "disposal_reasons"] as const;
+const TABLES = ["mesh_sizes", "net_conditions", "fouling_levels", "net_statuses", "removal_reasons", "repair_types", "disposal_reasons"] as const;
 type LookupTable = (typeof TABLES)[number];
 
 export function LookupEditor({ table, items }: { table: LookupTable; items: LookupRow[] }) {

@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateNetAction } from "@/lib/actions/nets";
 import { CONDITIONS } from "@/lib/constants";
+import { FoulingSelect } from "@/components/nets/fouling-select";
 import type { Net } from "@/lib/types/database";
 
 export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
@@ -35,6 +36,7 @@ export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
   const [purchaseCost, setPurchaseCost] = useState(net.purchase_cost?.toString() ?? "");
   const [isNew, setIsNew] = useState(net.is_new);
   const [condition, setCondition] = useState(net.condition);
+  const [fouling, setFouling] = useState(net.fouling_level ?? "");
   const [remarks, setRemarks] = useState(net.remarks ?? "");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -53,6 +55,7 @@ export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
         purchase_cost: purchaseCost,
         is_new: isNew,
         condition,
+        fouling_level: fouling,
         remarks,
       });
       if (res.error) {
@@ -60,6 +63,7 @@ export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
         return;
       }
       toast.success(`${net.net_code} updated.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       router.refresh();
     });
@@ -99,6 +103,7 @@ export function EditNetDialog({ net, small }: { net: Net; small?: boolean }) {
               </SelectContent>
             </Select>
           </Field>
+          <FoulingSelect label="Fouling level" value={fouling} onChange={setFouling} />
           <Field label="Diameter (m)">
             <Input value={diameter} onChange={(e) => setDiameter(e.target.value)} type="number" step="0.1" />
           </Field>

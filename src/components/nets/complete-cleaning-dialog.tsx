@@ -36,6 +36,7 @@ export function CompleteCleaningDialog({ netId, netCode, small }: { netId: strin
         return;
       }
       toast.success(`${netCode} cleaning completed — ready for use.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       router.refresh();
     });
@@ -51,7 +52,7 @@ export function CompleteCleaningDialog({ netId, netCode, small }: { netId: strin
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Complete Cleaning — {netCode}</DialogTitle>
-          <DialogDescription>Net returns to the Net Store as "Ready for Use".</DialogDescription>
+          <DialogDescription>Net returns to the Net Store as &quot;Ready for Use&quot;, with fouling reset to None.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-1.5">

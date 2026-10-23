@@ -62,6 +62,9 @@ export const REMOVAL_REASONS = [
 
 export const CONDITIONS = ["New", "Excellent", "Good", "Fair", "Poor", "Damaged", "Requires Repair", "Beyond Repair"] as const;
 
+// Mirrors the fouling_levels lookup table, the same way CONDITIONS mirrors net_conditions.
+export const FOULING_LEVELS = ["None", "Light", "Medium", "Heavy", "Very heavy"] as const;
+
 export const SITE_SLUGS: Record<string, string> = { ST05: "station-05", OFFS: "offshore" };
 export const SITE_CODES_BY_SLUG: Record<string, string> = { "station-05": "ST05", offshore: "OFFS" };
 

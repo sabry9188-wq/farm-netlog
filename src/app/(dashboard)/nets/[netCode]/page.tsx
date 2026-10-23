@@ -68,6 +68,7 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
             <Row label="Purchase date" value={formatDate(net.purchase_date)} />
             <Row label="Purchase cost" value={net.purchase_cost ? `$${net.purchase_cost.toLocaleString()}` : "—"} />
             <Row label="Condition" value={net.condition} />
+            <Row label="Fouling level" value={net.fouling_level ?? "—"} />
             <Row label="New / Used" value={net.is_new ? "New" : "Used"} />
           </CardContent>
         </Card>
@@ -174,7 +175,7 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
-                    <TableRow><TableHead>Start</TableHead><TableHead>Completed</TableHead><TableHead>Method</TableHead><TableHead>Condition After</TableHead></TableRow>
+                    <TableRow><TableHead>Start</TableHead><TableHead>Completed</TableHead><TableHead>Method</TableHead><TableHead>Fouling Before</TableHead><TableHead>Condition After</TableHead></TableRow>
                   </TableHeader>
                   <TableBody>
                     {cleaning.map((c) => (
@@ -182,6 +183,7 @@ export default async function NetProfilePage({ params }: { params: Promise<{ net
                         <TableCell>{formatDate(c.start_date)}</TableCell>
                         <TableCell>{c.completion_date ? formatDate(c.completion_date) : "In progress"}</TableCell>
                         <TableCell>{c.method ?? "—"}</TableCell>
+                        <TableCell>{c.fouling_before ?? "—"}</TableCell>
                         <TableCell>{c.condition_after ?? "—"}</TableCell>
                       </TableRow>
                     ))}

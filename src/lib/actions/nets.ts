@@ -2,10 +2,37 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AVAILABLE_STATUSES } from "@/lib/constants";
-import type { Net, NetCategory } from "@/lib/types/database";
+import { canCleanRepair, canInstallChangeNets, canManageNets } from "@/lib/permissions";
+import type { CleaningRecord, Net, NetCategory, NetInstallation, UserRole } from "@/lib/types/database";
 
-type ActionResult<T = unknown> = { data?: T; error?: string };
+// `warning` = the main workflow saved, but a follow-up write (fouling) didn't.
+type ActionResult<T = unknown> = { data?: T; error?: string; warning?: string };
+
+type AdminClient = ReturnType<typeof createAdminClient>;
+
+// The fouling columns aren't parameters of the workflow functions, and RLS
+// only lets Admin write nets / net_installations / cleaning_records
+// directly. So after a workflow function succeeds, the fouling fields are
+// written with the service-role client — but only once the caller has been
+// checked against the same roles that function requires.
+async function writeFouling(
+  allowed: (role: UserRole | undefined) => boolean,
+  write: (admin: AdminClient) => Promise<{ error: { message: string } | null }[]>,
+): Promise<string | undefined> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return "Fouling level not saved: not signed in.";
+  const { data: profile } = await supabase.from("profiles").select("role, status").eq("id", user.id).single();
+  if (profile?.status !== "active" || !allowed(profile?.role)) return "Fouling level not saved: your role can't change it.";
+
+  const results = await write(createAdminClient());
+  const failed = results.find((r) => r.error);
+  return failed?.error ? `Fouling level not saved: ${failed.error.message}` : undefined;
+}
 
 export async function fetchEligibleNetsAction(input: {
   siteId: string;
@@ -43,7 +70,14 @@ export async function registerNetAction(net: Record<string, unknown>): Promise<A
 }
 
 export async function updateNetAction(netId: string, updates: Record<string, unknown>): Promise<ActionResult> {
-  const res = await callRpc("fn_update_net", { p_net_id: netId, p_updates: updates });
+  // fn_update_net doesn't know about fouling_level, so it's saved separately.
+  const { fouling_level: foulingLevel, ...rest } = updates;
+  const res = await callRpc("fn_update_net", { p_net_id: netId, p_updates: rest });
+  if (!res.error && typeof foulingLevel === "string" && foulingLevel) {
+    res.warning = await writeFouling(canManageNets, async (admin) => [
+      await admin.from("nets").update({ fouling_level: foulingLevel }).eq("id", netId),
+    ]);
+  }
   revalidateCommon(["/nets", "/store", "/top-nets", "/guard-nets"]);
   return res;
 }
@@ -89,8 +123,9 @@ export async function removeNetAction(input: {
   condition: string;
   destination: string;
   remarks?: string;
+  foulingAtRemoval?: string;
 }): Promise<ActionResult> {
-  const res = await callRpc("fn_remove_net", {
+  const res = await callRpc<NetInstallation>("fn_remove_net", {
     p_net_id: input.netId,
     p_removal_date: input.removalDate ?? new Date().toISOString().slice(0, 10),
     p_removal_reason: input.removalReason,
@@ -98,6 +133,23 @@ export async function removeNetAction(input: {
     p_destination: input.destination,
     p_remarks: input.remarks ?? null,
   });
+  const fouling = input.foulingAtRemoval;
+  if (!res.error && res.data && fouling) {
+    const installationId = res.data.id;
+    res.warning = await writeFouling(canInstallChangeNets, async (admin) => {
+      const writes = [
+        await admin.from("net_installations").update({ fouling_at_removal: fouling }).eq("id", installationId),
+        await admin.from("nets").update({ fouling_level: fouling }).eq("id", input.netId),
+      ];
+      // Removing straight to Cleaning opens a cleaning record — its "before" is the fouling just recorded.
+      if (input.destination === "Cleaning") {
+        writes.push(
+          await admin.from("cleaning_records").update({ fouling_before: fouling }).eq("net_id", input.netId).is("completion_date", null),
+        );
+      }
+      return writes;
+    });
+  }
   revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/cleaning", "/repair", "/movements", "/holding"]);
   return res;
 }
@@ -110,8 +162,19 @@ export async function changeNetAction(input: {
   changeDate?: string;
   remarks?: string;
   destination?: string;
+  foulingAtRemoval?: string;
 }): Promise<ActionResult> {
-  const res = await callRpc("fn_change_net", {
+  // fn_change_net returns the replacement's new installation, so look up the
+  // outgoing net's open installation first to record its fouling afterwards.
+  const supabase = await createClient();
+  const { data: outgoing } = await supabase
+    .from("net_installations")
+    .select("id")
+    .eq("net_id", input.oldNetId)
+    .is("removal_date", null)
+    .maybeSingle();
+
+  const res: ActionResult = await callRpc("fn_change_net", {
     p_old_net_id: input.oldNetId,
     p_new_net_id: input.newNetId,
     p_removal_reason: input.removalReason,
@@ -120,6 +183,13 @@ export async function changeNetAction(input: {
     p_remarks: input.remarks ?? null,
     p_destination: input.destination ?? "Net Store",
   });
+  const fouling = input.foulingAtRemoval;
+  if (!res.error && fouling) {
+    res.warning = await writeFouling(canInstallChangeNets, async (admin) => [
+      ...(outgoing ? [await admin.from("net_installations").update({ fouling_at_removal: fouling }).eq("id", outgoing.id)] : []),
+      await admin.from("nets").update({ fouling_level: fouling }).eq("id", input.oldNetId),
+    ]);
+  }
   revalidateCommon(["/nets", "/store", "/dashboard", "/cages", "/alerts", "/movements", "/install", "/holding"]);
   return res;
 }
@@ -147,13 +217,21 @@ export async function sendToCleaningAction(input: {
   startDate?: string;
   method?: string;
   remarks?: string;
+  foulingBefore?: string;
 }): Promise<ActionResult> {
-  const res = await callRpc("fn_send_to_cleaning", {
+  const res = await callRpc<CleaningRecord>("fn_send_to_cleaning", {
     p_net_id: input.netId,
     p_start_date: input.startDate ?? new Date().toISOString().slice(0, 10),
     p_method: input.method ?? null,
     p_remarks: input.remarks ?? null,
   });
+  const fouling = input.foulingBefore;
+  if (!res.error && res.data && fouling) {
+    const recordId = res.data.id;
+    res.warning = await writeFouling(canCleanRepair, async (admin) => [
+      await admin.from("cleaning_records").update({ fouling_before: fouling }).eq("id", recordId),
+    ]);
+  }
   revalidateCommon(["/cleaning", "/nets", "/store", "/dashboard"]);
   return res;
 }
@@ -165,9 +243,10 @@ export async function logCageCleaningAction(input: {
   method?: string;
   adequate: boolean;
   remarks?: string;
+  foulingBefore?: string;
 }): Promise<ActionResult> {
   const today = new Date().toISOString().slice(0, 10);
-  const res = await callRpc("fn_log_cage_cleaning", {
+  const res = await callRpc<CleaningRecord>("fn_log_cage_cleaning", {
     p_net_id: input.netId,
     p_start_date: input.startDate ?? today,
     p_completion_date: input.completionDate ?? input.startDate ?? today,
@@ -175,6 +254,15 @@ export async function logCageCleaningAction(input: {
     p_adequate: input.adequate,
     p_remarks: input.remarks ?? null,
   });
+  if (!res.error && res.data) {
+    const recordId = res.data.id;
+    const fouling = input.foulingBefore;
+    // In-cage cleaning is logged already finished, so the net is clean now.
+    res.warning = await writeFouling(canCleanRepair, async (admin) => [
+      ...(fouling ? [await admin.from("cleaning_records").update({ fouling_before: fouling }).eq("id", recordId)] : []),
+      await admin.from("nets").update({ fouling_level: "None" }).eq("id", input.netId),
+    ]);
+  }
   revalidateCommon(["/cleaning", "/nets", "/cages", "/dashboard"]);
   return res;
 }
@@ -191,6 +279,11 @@ export async function completeCleaningAction(input: {
     p_condition_after: input.conditionAfter,
     p_remarks: input.remarks ?? null,
   });
+  if (!res.error) {
+    res.warning = await writeFouling(canCleanRepair, async (admin) => [
+      await admin.from("nets").update({ fouling_level: "None" }).eq("id", input.netId),
+    ]);
+  }
   revalidateCommon(["/cleaning", "/nets", "/store", "/dashboard"]);
   return res;
 }

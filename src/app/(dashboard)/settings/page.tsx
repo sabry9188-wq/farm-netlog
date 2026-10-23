@@ -15,9 +15,10 @@ export default async function SettingsPage() {
   if (!profile || profile.role !== "admin") redirect("/dashboard");
 
   const supabase = await createClient();
-  const [meshSizes, conditions, statuses, removalReasons, repairTypes, disposalReasons, systemSettings] = await Promise.all([
+  const [meshSizes, conditions, foulingLevels, statuses, removalReasons, repairTypes, disposalReasons, systemSettings] = await Promise.all([
     supabase.from("mesh_sizes").select("*").order("sort_order"),
     supabase.from("net_conditions").select("*").order("sort_order"),
+    supabase.from("fouling_levels").select("*").order("sort_order"),
     supabase.from("net_statuses").select("*").order("sort_order"),
     supabase.from("removal_reasons").select("*").order("sort_order"),
     supabase.from("repair_types").select("*").order("sort_order"),
@@ -34,6 +35,7 @@ export default async function SettingsPage() {
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="mesh">Mesh Sizes</TabsTrigger>
           <TabsTrigger value="conditions">Conditions</TabsTrigger>
+          <TabsTrigger value="fouling">Fouling Levels</TabsTrigger>
           <TabsTrigger value="statuses">Statuses</TabsTrigger>
           <TabsTrigger value="removal">Removal Reasons</TabsTrigger>
           <TabsTrigger value="repair">Repair Types</TabsTrigger>
@@ -54,6 +56,11 @@ export default async function SettingsPage() {
         <TabsContent value="conditions">
           <Card><CardHeader><CardTitle className="text-base">Net Conditions</CardTitle></CardHeader>
             <CardContent><LookupEditor table="net_conditions" items={(conditions.data as LookupRow[]) ?? []} /></CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="fouling">
+          <Card><CardHeader><CardTitle className="text-base">Fouling Levels</CardTitle></CardHeader>
+            <CardContent><LookupEditor table="fouling_levels" items={(foulingLevels.data as LookupRow[]) ?? []} /></CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="statuses">
