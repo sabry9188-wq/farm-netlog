@@ -91,13 +91,14 @@ function HoldingTable({
               <TableHead>{sinceLabel}</TableHead>
               <TableHead>Days</TableHead>
               <TableHead>Condition</TableHead>
+              <TableHead>Fouling</TableHead>
               {canRetrieve && <TableHead className="text-right">Action</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={canRetrieve ? 9 : 8} className="py-10 text-center text-muted-foreground">
+                <TableCell colSpan={canRetrieve ? 10 : 9} className="py-10 text-center text-muted-foreground">
                   {emptyText}
                 </TableCell>
               </TableRow>
@@ -116,6 +117,7 @@ function HoldingTable({
                 <TableCell>{formatDate(since)}</TableCell>
                 <TableCell className="font-semibold">{since ? daysBetween(since, today) : "—"}</TableCell>
                 <TableCell>{net.condition}</TableCell>
+                <TableCell>{net.fouling_level ?? "—"}</TableCell>
                 {canRetrieve && (
                   <TableCell className="text-right">
                     <RetrieveNetDialog
@@ -123,6 +125,7 @@ function HoldingTable({
                       netCode={net.net_code}
                       status={net.status}
                       currentCondition={net.condition}
+                      currentFouling={net.fouling_level}
                       small
                     />
                   </TableCell>

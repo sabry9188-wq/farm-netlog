@@ -200,14 +200,28 @@ export async function retrieveNetAction(input: {
   destination: string;
   condition?: string;
   remarks?: string;
+  fouling?: string;
 }): Promise<ActionResult> {
-  const res = await callRpc("fn_retrieve_net", {
+  const res: ActionResult = await callRpc("fn_retrieve_net", {
     p_net_id: input.netId,
     p_retrieve_date: input.retrieveDate ?? new Date().toISOString().slice(0, 10),
     p_destination: input.destination,
     p_condition: input.condition ?? null,
     p_remarks: input.remarks ?? null,
   });
+  const fouling = input.fouling;
+  if (!res.error && fouling) {
+    res.warning = await writeFouling(canInstallChangeNets, async (admin) => {
+      const writes = [await admin.from("nets").update({ fouling_level: fouling }).eq("id", input.netId)];
+      // Retrieving straight to Cleaning opens a cleaning record — its "before" is the fouling just recorded.
+      if (input.destination === "Cleaning") {
+        writes.push(
+          await admin.from("cleaning_records").update({ fouling_before: fouling }).eq("net_id", input.netId).is("completion_date", null),
+        );
+      }
+      return writes;
+    });
+  }
   revalidateCommon(["/holding", "/nets", "/store", "/dashboard", "/cleaning", "/repair", "/movements"]);
   return res;
 }

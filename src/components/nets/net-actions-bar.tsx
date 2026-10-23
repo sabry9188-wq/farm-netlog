@@ -124,7 +124,7 @@ export function NetActionsBar({
 
   if (canInstall && (HOLDING_STATUSES as readonly string[]).includes(net.status)) {
     buttons.push(
-      <RetrieveNetDialog key="retrieve" netId={net.id} netCode={net.net_code} status={net.status} currentCondition={net.condition} small />,
+      <RetrieveNetDialog key="retrieve" netId={net.id} netCode={net.net_code} status={net.status} currentCondition={net.condition} currentFouling={net.fouling_level} small />,
     );
   }
 

@@ -20,18 +20,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { retrieveNetAction } from "@/lib/actions/nets";
 import { CONDITIONS, RETRIEVE_DESTINATIONS } from "@/lib/constants";
+import { FoulingSelect } from "@/components/nets/fouling-select";
 
 export function RetrieveNetDialog({
   netId,
   netCode,
   status,
   currentCondition,
+  currentFouling,
   small,
 }: {
   netId: string;
   netCode: string;
   status: string;
   currentCondition: string;
+  currentFouling: string | null;
   small?: boolean;
 }) {
   const isDrying = status === "Drying";
@@ -42,18 +45,27 @@ export function RetrieveNetDialog({
   const [retrieveDate, setRetrieveDate] = useState(new Date().toISOString().slice(0, 10));
   const [destination, setDestination] = useState<string>("Net Store");
   const [condition, setCondition] = useState(currentCondition);
+  const [fouling, setFouling] = useState(currentFouling ?? "");
   const [remarks, setRemarks] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   function submit() {
     startTransition(async () => {
-      const res = await retrieveNetAction({ netId, retrieveDate, destination, condition, remarks: remarks || undefined });
+      const res = await retrieveNetAction({
+        netId,
+        retrieveDate,
+        destination,
+        condition,
+        remarks: remarks || undefined,
+        fouling: fouling || undefined,
+      });
       if (res.error) {
         toast.error(res.error);
         return;
       }
       toast.success(`${netCode} moved to ${destination === "Drying" ? "the drying area" : destination}.`);
+      if (res.warning) toast.warning(res.warning);
       setOpen(false);
       setRemarks("");
       router.refresh();
@@ -103,6 +115,7 @@ export function RetrieveNetDialog({
               </SelectContent>
             </Select>
           </div>
+          <FoulingSelect label="Fouling level now" value={fouling} onChange={setFouling} />
           <div className="space-y-1.5">
             <Label>Remarks (optional)</Label>
             <Textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} rows={2} />
