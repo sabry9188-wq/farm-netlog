@@ -29,6 +29,7 @@ export default async function SiteCageMapPage({ params }: { params: Promise<{ si
         <LegendDot color="bg-status-orange" label="Change required soon (≤7 days)" />
         <LegendDot color="bg-status-red" label="Overdue" />
         <LegendDot color="bg-status-grey" label="No net assigned" />
+        <span className="text-muted-foreground italic">Dot shows whichever of the main or guard net is due first</span>
       </div>
 
       <CageGrid cages={cages} siteSlug={siteSlugParam} />
