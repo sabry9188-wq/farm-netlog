@@ -14,7 +14,8 @@ export interface Profile {
   email: string;
   role: UserRole;
   status: UserStatus;
-  can_approve_disposal: boolean;
+  can_approve_disposal: boolean; // superseded by permissions ("dispose"), kept for history
+  permissions: string[];
   avatar_url: string | null;
   last_seen_notifications_at: string;
   created_at: string;

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { getNets } from "@/lib/queries/nets";
-import { getCurrentProfile, canCleanRepair } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { NetsFilterBar } from "@/components/nets/nets-filter-bar";
 import { NetsTable } from "@/components/nets/nets-table";
@@ -27,7 +27,7 @@ export default async function NetsInventoryPage({
     getCurrentProfile(),
   ]);
 
-  const canRegister = profile?.role === "admin" || profile?.role === "storekeeper";
+  const canRegister = can(profile, "nets_manage");
   const hasFilters = Boolean(sp.site || sp.category || sp.mesh || sp.status || sp.condition || sp.q);
   const netCount = `${nets.length} net${nets.length === 1 ? "" : "s"}`;
 
@@ -44,8 +44,9 @@ export default async function NetsInventoryPage({
       <NetsTable
         nets={nets}
         canManage={canRegister}
-        isAdmin={profile?.role === "admin"}
-        canMarkFound={canCleanRepair(profile?.role)}
+        canDelete={can(profile, "nets_delete")}
+        canReactivate={can(profile, "reactivate")}
+        canMarkFound={can(profile, "lost_found")}
       />
     </div>
   );

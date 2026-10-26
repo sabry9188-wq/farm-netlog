@@ -8,14 +8,20 @@ import { Button } from "@/components/ui/button";
 import { DownloadCloud } from "lucide-react";
 import { LookupEditor } from "@/components/settings/lookup-editor";
 import { SystemSettingsForm } from "@/components/settings/system-settings-form";
-import type { LookupRow, SystemSetting } from "@/lib/types/database";
+import { PermissionsEditor } from "@/components/settings/permissions-editor";
+import type { LookupRow, Profile, SystemSetting } from "@/lib/types/database";
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const sp = await searchParams;
   const profile = await getCurrentProfile();
   if (!profile || profile.role !== "admin") redirect("/dashboard");
 
   const supabase = await createClient();
-  const [meshSizes, conditions, foulingLevels, statuses, removalReasons, repairTypes, disposalReasons, systemSettings] = await Promise.all([
+  const [meshSizes, conditions, foulingLevels, statuses, removalReasons, repairTypes, disposalReasons, systemSettings, users] = await Promise.all([
     supabase.from("mesh_sizes").select("*").order("sort_order"),
     supabase.from("net_conditions").select("*").order("sort_order"),
     supabase.from("fouling_levels").select("*").order("sort_order"),
@@ -24,15 +30,17 @@ export default async function SettingsPage() {
     supabase.from("repair_types").select("*").order("sort_order"),
     supabase.from("disposal_reasons").select("*").order("sort_order"),
     supabase.from("system_settings").select("*").order("key"),
+    supabase.from("profiles").select("*").order("full_name"),
   ]);
 
   return (
     <div>
       <PageHeader title="Settings" description="Configure the controlled lists and thresholds the whole system uses." />
 
-      <Tabs defaultValue="general">
+      <Tabs defaultValue={sp.tab ?? "general"}>
         <TabsList className="flex-wrap">
           <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="permissions">Permissions</TabsTrigger>
           <TabsTrigger value="mesh">Mesh Sizes</TabsTrigger>
           <TabsTrigger value="conditions">Conditions</TabsTrigger>
           <TabsTrigger value="fouling">Fouling Levels</TabsTrigger>
@@ -46,6 +54,13 @@ export default async function SettingsPage() {
         <TabsContent value="general">
           <Card><CardHeader><CardTitle className="text-base">Net Change Period &amp; Alert Thresholds</CardTitle></CardHeader>
             <CardContent><SystemSettingsForm settings={(systemSettings.data as SystemSetting[]) ?? []} /></CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="permissions">
+          <Card><CardHeader><CardTitle className="text-base">User Permissions</CardTitle></CardHeader>
+            <CardContent>
+              <PermissionsEditor users={(users.data as Profile[]) ?? []} initialUserId={sp.user} />
+            </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="mesh">

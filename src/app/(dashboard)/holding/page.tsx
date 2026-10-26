@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowDownToLine, Sun } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getHoldingNets, type HoldingNetRow } from "@/lib/queries/nets";
-import { getCurrentProfile, canInstallChangeNets } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +15,7 @@ export default async function HoldingPage() {
   const supabase = await createClient();
   const [rows, profile] = await Promise.all([getHoldingNets(supabase), getCurrentProfile()]);
 
-  const canRetrieve = canInstallChangeNets(profile?.role);
+  const canRetrieve = can(profile, "install");
   const underCage = rows.filter((r) => r.net.status === "Under Cage (Seabed)");
   const drying = rows.filter((r) => r.net.status === "Drying");
 

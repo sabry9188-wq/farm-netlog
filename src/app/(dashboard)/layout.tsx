@@ -32,7 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="flex h-screen w-full overflow-hidden bg-background">
       <aside className="hidden w-56 shrink-0 p-3 lg:block">
         <div className="h-full overflow-hidden rounded-3xl shadow-lg">
-          <SidebarNav role={profile.role} siteStats={siteStats} />
+          <SidebarNav role={profile.role} permissions={profile.permissions ?? []} siteStats={siteStats} />
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">

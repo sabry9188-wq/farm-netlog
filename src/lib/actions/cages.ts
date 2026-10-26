@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentProfile, canEditCageInfo } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 
 type ActionResult<T = unknown> = { data?: T; error?: string };
 
@@ -15,7 +15,7 @@ export async function updateCageInfoAction(input: {
   path: string;
 }): Promise<ActionResult> {
   const profile = await getCurrentProfile();
-  if (!canEditCageInfo(profile?.role)) {
+  if (!can(profile, "cage_info")) {
     return { error: "You don't have permission to edit cage information." };
   }
 

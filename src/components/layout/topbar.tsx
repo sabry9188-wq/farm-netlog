@@ -61,7 +61,7 @@ export function Topbar({
         >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <div className="relative h-full overflow-hidden rounded-3xl shadow-lg">
-            <SidebarNav role={role} siteStats={siteStats} onNavigate={() => setOpen(false)} />
+            <SidebarNav role={role} permissions={profile?.permissions ?? []} siteStats={siteStats} onNavigate={() => setOpen(false)} />
             <SheetClose asChild>
               <Button variant="ghost" size="icon-sm" className="absolute top-3 right-3 text-white hover:bg-white/10 hover:text-white">
                 <X className="size-4" />

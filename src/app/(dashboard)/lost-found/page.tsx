@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Ghost, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getLostNets, getDisposedNets } from "@/lib/queries/nets";
-import { getCurrentProfile, canCleanRepair, isAdmin as checkIsAdmin } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,8 +16,8 @@ export default async function LostFoundPage() {
   const supabase = await createClient();
   const [lost, disposed, profile] = await Promise.all([getLostNets(supabase), getDisposedNets(supabase), getCurrentProfile()]);
 
-  const canFind = canCleanRepair(profile?.role);
-  const canReactivate = checkIsAdmin(profile?.role);
+  const canFind = can(profile, "lost_found");
+  const canReactivate = can(profile, "reactivate");
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCleaningQueue, getCleaningHistory, getInCageCleaningLog } from "@/lib/queries/workflows";
-import { getCurrentProfile, canCleanRepair } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -17,7 +17,7 @@ export default async function CleaningPage() {
     getInCageCleaningLog(supabase),
     getCurrentProfile(),
   ]);
-  const writable = canCleanRepair(profile?.role);
+  const writable = can(profile, "cleaning");
 
   return (
     <div>

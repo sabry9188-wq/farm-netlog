@@ -89,5 +89,5 @@ export const NAV_ITEMS = [
   { href: "/reports", label: "Reports", icon: "FileBarChart" },
   { href: "/users", label: "Users", icon: "Users", adminOnly: true },
   { href: "/settings", label: "Settings", icon: "Settings", adminOnly: true },
-  { href: "/audit-log", label: "Audit Log", icon: "ShieldCheck", adminOnly: true },
+  { href: "/audit-log", label: "Audit Log", icon: "ShieldCheck", permission: "audit_log" },
 ] as const;

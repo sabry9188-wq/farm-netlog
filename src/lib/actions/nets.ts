@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AVAILABLE_STATUSES } from "@/lib/constants";
-import { canCleanRepair, canInstallChangeNets, canManageNets } from "@/lib/permissions";
-import type { CleaningRecord, Net, NetCategory, NetInstallation, UserRole } from "@/lib/types/database";
+import { can, type Permission } from "@/lib/permissions";
+import type { CleaningRecord, Net, NetCategory, NetInstallation } from "@/lib/types/database";
 
 // `warning` = the main workflow saved, but a follow-up write (fouling) didn't.
 type ActionResult<T = unknown> = { data?: T; error?: string; warning?: string };
@@ -16,9 +16,9 @@ type AdminClient = ReturnType<typeof createAdminClient>;
 // only lets Admin write nets / net_installations / cleaning_records
 // directly. So after a workflow function succeeds, the fouling fields are
 // written with the service-role client — but only once the caller has been
-// checked against the same roles that function requires.
+// checked for the same permission that function requires.
 async function writeFouling(
-  allowed: (role: UserRole | undefined) => boolean,
+  permission: Permission,
   write: (admin: AdminClient) => Promise<{ error: { message: string } | null }[]>,
 ): Promise<string | undefined> {
   const supabase = await createClient();
@@ -26,8 +26,8 @@ async function writeFouling(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return "Fouling level not saved: not signed in.";
-  const { data: profile } = await supabase.from("profiles").select("role, status").eq("id", user.id).single();
-  if (profile?.status !== "active" || !allowed(profile?.role)) return "Fouling level not saved: your role can't change it.";
+  const { data: profile } = await supabase.from("profiles").select("role, status, permissions").eq("id", user.id).single();
+  if (profile?.status !== "active" || !can(profile, permission)) return "Fouling level not saved: you don't have permission.";
 
   const results = await write(createAdminClient());
   const failed = results.find((r) => r.error);
@@ -74,7 +74,7 @@ export async function updateNetAction(netId: string, updates: Record<string, unk
   const { fouling_level: foulingLevel, ...rest } = updates;
   const res = await callRpc("fn_update_net", { p_net_id: netId, p_updates: rest });
   if (!res.error && typeof foulingLevel === "string" && foulingLevel) {
-    res.warning = await writeFouling(canManageNets, async (admin) => [
+    res.warning = await writeFouling("nets_manage", async (admin) => [
       await admin.from("nets").update({ fouling_level: foulingLevel }).eq("id", netId),
     ]);
   }
@@ -136,7 +136,7 @@ export async function removeNetAction(input: {
   const fouling = input.foulingAtRemoval;
   if (!res.error && res.data && fouling) {
     const installationId = res.data.id;
-    res.warning = await writeFouling(canInstallChangeNets, async (admin) => {
+    res.warning = await writeFouling("install", async (admin) => {
       const writes = [
         await admin.from("net_installations").update({ fouling_at_removal: fouling }).eq("id", installationId),
         await admin.from("nets").update({ fouling_level: fouling }).eq("id", input.netId),
@@ -185,7 +185,7 @@ export async function changeNetAction(input: {
   });
   const fouling = input.foulingAtRemoval;
   if (!res.error && fouling) {
-    res.warning = await writeFouling(canInstallChangeNets, async (admin) => [
+    res.warning = await writeFouling("install", async (admin) => [
       ...(outgoing ? [await admin.from("net_installations").update({ fouling_at_removal: fouling }).eq("id", outgoing.id)] : []),
       await admin.from("nets").update({ fouling_level: fouling }).eq("id", input.oldNetId),
     ]);
@@ -211,7 +211,7 @@ export async function retrieveNetAction(input: {
   });
   const fouling = input.fouling;
   if (!res.error && fouling) {
-    res.warning = await writeFouling(canInstallChangeNets, async (admin) => {
+    res.warning = await writeFouling("install", async (admin) => {
       const writes = [await admin.from("nets").update({ fouling_level: fouling }).eq("id", input.netId)];
       // Retrieving straight to Cleaning opens a cleaning record — its "before" is the fouling just recorded.
       if (input.destination === "Cleaning") {
@@ -242,7 +242,7 @@ export async function sendToCleaningAction(input: {
   const fouling = input.foulingBefore;
   if (!res.error && res.data && fouling) {
     const recordId = res.data.id;
-    res.warning = await writeFouling(canCleanRepair, async (admin) => [
+    res.warning = await writeFouling("cleaning", async (admin) => [
       await admin.from("cleaning_records").update({ fouling_before: fouling }).eq("id", recordId),
     ]);
   }
@@ -272,7 +272,7 @@ export async function logCageCleaningAction(input: {
     const recordId = res.data.id;
     const fouling = input.foulingBefore;
     // In-cage cleaning is logged already finished, so the net is clean now.
-    res.warning = await writeFouling(canCleanRepair, async (admin) => [
+    res.warning = await writeFouling("cleaning", async (admin) => [
       ...(fouling ? [await admin.from("cleaning_records").update({ fouling_before: fouling }).eq("id", recordId)] : []),
       await admin.from("nets").update({ fouling_level: "None" }).eq("id", input.netId),
     ]);
@@ -294,7 +294,7 @@ export async function completeCleaningAction(input: {
     p_remarks: input.remarks ?? null,
   });
   if (!res.error) {
-    res.warning = await writeFouling(canCleanRepair, async (admin) => [
+    res.warning = await writeFouling("cleaning", async (admin) => [
       await admin.from("nets").update({ fouling_level: "None" }).eq("id", input.netId),
     ]);
   }

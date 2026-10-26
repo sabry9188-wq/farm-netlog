@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PERMISSIONS, ROLE_DEFAULT_PERMISSIONS, type Permission } from "@/lib/permissions";
 import type { UserRole } from "@/lib/types/database";
 
 async function requireAdmin() {
@@ -37,7 +38,10 @@ export async function createUserWithPasswordAction(input: {
   if (error) return { error: error.message };
 
   if (data.user) {
-    await admin.from("profiles").update({ full_name: input.fullName, role: input.role }).eq("id", data.user.id);
+    await admin
+      .from("profiles")
+      .update({ full_name: input.fullName, role: input.role, permissions: ROLE_DEFAULT_PERMISSIONS[input.role] })
+      .eq("id", data.user.id);
   }
 
   revalidatePath("/users");
@@ -55,7 +59,10 @@ export async function inviteUserAction(input: { email: string; fullName: string;
   if (error) return { error: error.message };
 
   if (data.user) {
-    await admin.from("profiles").update({ full_name: input.fullName, role: input.role }).eq("id", data.user.id);
+    await admin
+      .from("profiles")
+      .update({ full_name: input.fullName, role: input.role, permissions: ROLE_DEFAULT_PERMISSIONS[input.role] })
+      .eq("id", data.user.id);
   }
 
   revalidatePath("/users");
@@ -81,7 +88,11 @@ export async function updateUserRoleAction(input: { userId: string; role: UserRo
   const check = await requireAdmin();
   if (!check.ok) return { error: check.error };
 
-  const { error } = await check.supabase.from("profiles").update({ role: input.role }).eq("id", input.userId);
+  // A new role starts from that role's usual permissions; Admin can fine-tune them in Settings → Permissions.
+  const { error } = await check.supabase
+    .from("profiles")
+    .update({ role: input.role, permissions: ROLE_DEFAULT_PERMISSIONS[input.role] })
+    .eq("id", input.userId);
   if (error) return { error: error.message };
 
   revalidatePath("/users");
@@ -99,13 +110,45 @@ export async function setUserStatusAction(input: { userId: string; status: "acti
   return { data: true };
 }
 
-export async function setCanApproveDisposalAction(input: { userId: string; canApprove: boolean }) {
+export async function setUserPermissionAction(input: { userId: string; permission: Permission; enabled: boolean }) {
+  const check = await requireAdmin();
+  if (!check.ok) return { error: check.error };
+  if (!PERMISSIONS.some((p) => p.key === input.permission)) return { error: "Unknown permission." };
+
+  // Read the current list fresh so two quick toggles don't overwrite each other.
+  const { data: target, error: readError } = await check.supabase
+    .from("profiles")
+    .select("role, permissions")
+    .eq("id", input.userId)
+    .single();
+  if (readError || !target) return { error: readError?.message ?? "User not found." };
+  if (target.role === "admin") return { error: "Admin always has every permission." };
+
+  const current = new Set<string>(target.permissions ?? []);
+  if (input.enabled) current.add(input.permission);
+  else current.delete(input.permission);
+
+  const { error } = await check.supabase.from("profiles").update({ permissions: [...current] }).eq("id", input.userId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/settings");
+  revalidatePath("/users");
+  return { data: true };
+}
+
+export async function resetUserPermissionsAction(input: { userId: string }) {
   const check = await requireAdmin();
   if (!check.ok) return { error: check.error };
 
-  const { error } = await check.supabase.from("profiles").update({ can_approve_disposal: input.canApprove }).eq("id", input.userId);
+  const { data: target } = await check.supabase.from("profiles").select("role").eq("id", input.userId).single();
+  if (!target) return { error: "User not found." };
+
+  const { error } = await check.supabase
+    .from("profiles")
+    .update({ permissions: ROLE_DEFAULT_PERMISSIONS[target.role as UserRole] })
+    .eq("id", input.userId);
   if (error) return { error: error.message };
 
-  revalidatePath("/users");
+  revalidatePath("/settings");
   return { data: true };
 }

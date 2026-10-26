@@ -12,10 +12,4 @@ export async function getCurrentProfile(): Promise<Profile | null> {
   return (data as Profile) ?? null;
 }
 
-export {
-  canInstallChangeNets,
-  canCleanRepair,
-  canManageNets,
-  canEditCageInfo,
-  isAdmin,
-} from "@/lib/permissions";
+export { can, isAdmin } from "@/lib/permissions";

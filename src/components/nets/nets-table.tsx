@@ -13,15 +13,18 @@ export function NetsTable({
   nets,
   showCategory = true,
   canManage = false,
-  isAdmin = false,
+  canDelete = false,
+  canReactivate = false,
   canMarkFound = false,
 }: {
   nets: NetWithSite[];
   showCategory?: boolean;
   canManage?: boolean;
-  isAdmin?: boolean;
+  canDelete?: boolean;
+  canReactivate?: boolean;
   canMarkFound?: boolean;
 }) {
+  const showActions = canManage || canDelete || canReactivate || canMarkFound;
   if (nets.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
@@ -44,7 +47,7 @@ export function NetsTable({
             <TableHead>Fouling</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Location</TableHead>
-            {(canManage || isAdmin || canMarkFound) && <TableHead className="text-right">Actions</TableHead>}
+            {showActions && <TableHead className="text-right">Actions</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,10 +68,10 @@ export function NetsTable({
                 <StatusBadge status={n.status} />
               </TableCell>
               <TableCell className="text-muted-foreground">{n.current_location}</TableCell>
-              {(canManage || isAdmin || canMarkFound) && (
+              {showActions && (
                 <TableCell>
                   <div className="flex justify-end gap-1.5">
-                    {isAdmin && n.status === "Disposed" && <ReactivateNetDialog netId={n.id} netCode={n.net_code} small />}
+                    {canReactivate && n.status === "Disposed" && <ReactivateNetDialog netId={n.id} netCode={n.net_code} small />}
                     {canMarkFound && n.status === "Lost" && (
                       <MarkFoundDialog netId={n.id} netCode={n.net_code} currentCondition={n.condition} small />
                     )}
@@ -76,9 +79,9 @@ export function NetsTable({
                       <>
                         <RegisterNetDialog template={{ ...n, site_code: n.sites?.site_code }} small />
                         <EditNetDialog net={n} small />
-                        <DeleteNetDialog netId={n.id} netCode={n.net_code} small />
                       </>
                     )}
+                    {canDelete && <DeleteNetDialog netId={n.id} netCode={n.net_code} small />}
                   </div>
                 </TableCell>
               )}

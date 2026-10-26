@@ -3,7 +3,7 @@ import { Package, Sparkles, Wrench, Bookmark, AlertOctagon, Ghost, Trash2, Bird,
 import { createClient } from "@/lib/supabase/server";
 import { getNets } from "@/lib/queries/nets";
 import { getDashboardData } from "@/lib/queries/dashboard";
-import { getCurrentProfile, canCleanRepair } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { NetsFilterBar } from "@/components/nets/nets-filter-bar";
@@ -31,7 +31,7 @@ export default async function NetStorePage({
     getCurrentProfile(),
   ]);
 
-  const canRegister = profile?.role === "admin" || profile?.role === "storekeeper";
+  const canRegister = can(profile, "nets_manage");
 
   return (
     <div>
@@ -61,8 +61,9 @@ export default async function NetStorePage({
       <NetsTable
         nets={nets}
         canManage={canRegister}
-        isAdmin={profile?.role === "admin"}
-        canMarkFound={canCleanRepair(profile?.role)}
+        canDelete={can(profile, "nets_delete")}
+        canReactivate={can(profile, "reactivate")}
+        canMarkFound={can(profile, "lost_found")}
       />
     </div>
   );

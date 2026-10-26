@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/lib/constants";
 import { NavIcon } from "@/components/layout/nav-icon";
 import { Waves } from "lucide-react";
+import { can } from "@/lib/permissions";
 import type { UserRole } from "@/lib/types/database";
 import type { SiteStat } from "@/lib/queries/sites";
 
@@ -17,15 +18,21 @@ const SITE_ACCENT_CLASSES: Record<(typeof SITE_ACCENTS)[number], { dot: string; 
 
 export function SidebarNav({
   role,
+  permissions,
   siteStats,
   onNavigate,
 }: {
   role: UserRole;
+  permissions: string[];
   siteStats: SiteStat[];
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const items = NAV_ITEMS.filter((item) => !("adminOnly" in item && item.adminOnly) || role === "admin");
+  const items = NAV_ITEMS.filter((item) => {
+    if ("adminOnly" in item && item.adminOnly) return role === "admin";
+    if ("permission" in item) return can({ role, permissions }, item.permission);
+    return true;
+  });
 
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">

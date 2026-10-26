@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Fish, Ruler, Calendar, Waves } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCageDetail, getCageRow, getCageInstallationHistory } from "@/lib/queries/cages";
-import { getCurrentProfile, canInstallChangeNets, canEditCageInfo, canCleanRepair } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { AlertBadge } from "@/components/shared/alert-badge";
@@ -39,9 +39,9 @@ export default async function CageDetailPage({
   const mainHistory = history.filter((h) => h.nets.category === "MAIN_NET");
   const guardHistory = history.filter((h) => h.nets.category === "GUARD_NET");
   const topHistory = history.filter((h) => h.nets.category === "TOP_NET");
-  const writable = canInstallChangeNets(profile?.role);
-  const canEditInfo = canEditCageInfo(profile?.role);
-  const canClean = canCleanRepair(profile?.role);
+  const writable = can(profile, "install");
+  const canEditInfo = can(profile, "cage_info");
+  const canClean = can(profile, "cleaning");
 
   return (
     <div>

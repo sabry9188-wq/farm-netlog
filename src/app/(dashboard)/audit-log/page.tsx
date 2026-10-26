@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, can } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,7 +9,7 @@ import { formatDate } from "@/lib/calculations";
 
 export default async function AuditLogPage() {
   const profile = await getCurrentProfile();
-  if (!profile || profile.role !== "admin") redirect("/dashboard");
+  if (!can(profile, "audit_log")) redirect("/dashboard");
 
   const supabase = await createClient();
   const { data: logs } = await supabase
