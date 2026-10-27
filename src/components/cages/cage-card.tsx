@@ -30,6 +30,7 @@ export function CageCard({ cage, siteSlug }: { cage: VCageCurrentState; siteSlug
         label="Main"
         mesh={cage.main_net_mesh}
         netCode={cage.main_net_code}
+        physicalNumber={cage.main_net_physical_number}
         daysRemaining={cage.main_net_days_remaining}
         dueDate={cage.main_net_expected_change_date}
         emptyText="No main net assigned"
@@ -37,6 +38,7 @@ export function CageCard({ cage, siteSlug }: { cage: VCageCurrentState; siteSlug
       <NetSection
         label="Guard"
         netCode={cage.guard_net_code}
+        physicalNumber={cage.guard_net_physical_number}
         daysRemaining={cage.guard_net_days_remaining}
         dueDate={cage.guard_net_expected_change_date}
         emptyText="No guard net assigned"
@@ -50,6 +52,7 @@ function NetSection({
   label,
   mesh,
   netCode,
+  physicalNumber,
   daysRemaining,
   dueDate,
   emptyText,
@@ -58,6 +61,7 @@ function NetSection({
   label: string;
   mesh?: string | null;
   netCode: string | null;
+  physicalNumber: string | null;
   daysRemaining: number | null;
   dueDate: string | null;
   emptyText: string;
@@ -71,7 +75,8 @@ function NetSection({
       </div>
       {netCode ? (
         <>
-          <p className="truncate font-mono text-[11px] text-muted-foreground">{netCode}</p>
+          {/* Physical number is what's marked on the net itself; fall back to the system Net ID if none was recorded. */}
+          <p className="truncate font-mono text-[11px] text-muted-foreground" title={netCode}>{physicalNumber || netCode}</p>
           {daysRemaining !== null && <AlertBadge daysRemaining={daysRemaining} className="w-fit text-[10px]" />}
           {dueDate && <p className="text-[11px] text-muted-foreground">Due {formatDate(dueDate)}</p>}
         </>
