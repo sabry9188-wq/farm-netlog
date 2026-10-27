@@ -57,6 +57,29 @@ export async function updateSystemSettingAction(key: string, value: string) {
   return { data: true };
 }
 
+export async function setSiteChangePeriodsAction(input: {
+  siteId: string;
+  mainDays: number | null;
+  guardDays: number | null;
+  recalculate: boolean;
+}) {
+  const check = await requireAdmin();
+  if (!check.ok) return { error: check.error };
+
+  const { error } = await check.supabase.rpc("fn_set_site_change_periods", {
+    p_site_id: input.siteId,
+    p_main_days: input.mainDays,
+    p_guard_days: input.guardDays,
+    p_recalculate: input.recalculate,
+  });
+  if (error) return { error: error.message };
+  revalidatePath("/settings");
+  revalidatePath("/cages", "layout");
+  revalidatePath("/alerts");
+  revalidatePath("/dashboard");
+  return { data: true };
+}
+
 export async function upsertStockThresholdAction(input: { siteId: string; category: string; meshSize: string; minimumQty: number }) {
   const check = await requireAdmin();
   if (!check.ok) return { error: check.error };

@@ -27,6 +27,9 @@ export interface Site {
   site_code: string;
   cage_diameter_m: number;
   cage_depth_m: number;
+  // Per-site net change periods; null = use the farm-wide setting.
+  main_change_period_days: number | null;
+  guard_change_period_days: number | null;
   created_at: string;
 }
 

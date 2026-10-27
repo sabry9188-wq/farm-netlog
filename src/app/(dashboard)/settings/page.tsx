@@ -9,7 +9,8 @@ import { DownloadCloud } from "lucide-react";
 import { LookupEditor } from "@/components/settings/lookup-editor";
 import { SystemSettingsForm } from "@/components/settings/system-settings-form";
 import { PermissionsEditor } from "@/components/settings/permissions-editor";
-import type { LookupRow, Profile, SystemSetting } from "@/lib/types/database";
+import { SiteChangePeriodsForm } from "@/components/settings/site-change-periods-form";
+import type { LookupRow, Profile, Site, SystemSetting } from "@/lib/types/database";
 
 export default async function SettingsPage({
   searchParams,
@@ -21,7 +22,7 @@ export default async function SettingsPage({
   if (!profile || profile.role !== "admin") redirect("/dashboard");
 
   const supabase = await createClient();
-  const [meshSizes, conditions, foulingLevels, statuses, removalReasons, repairTypes, disposalReasons, systemSettings, users] = await Promise.all([
+  const [meshSizes, conditions, foulingLevels, statuses, removalReasons, repairTypes, disposalReasons, systemSettings, users, sites] = await Promise.all([
     supabase.from("mesh_sizes").select("*").order("sort_order"),
     supabase.from("net_conditions").select("*").order("sort_order"),
     supabase.from("fouling_levels").select("*").order("sort_order"),
@@ -31,7 +32,11 @@ export default async function SettingsPage({
     supabase.from("disposal_reasons").select("*").order("sort_order"),
     supabase.from("system_settings").select("*").order("key"),
     supabase.from("profiles").select("*").order("full_name"),
+    supabase.from("sites").select("*").order("site_name"),
   ]);
+
+  const settingsList = (systemSettings.data as SystemSetting[]) ?? [];
+  const settingInt = (key: string, fallback: number) => Number(settingsList.find((s) => s.key === key)?.value ?? fallback);
 
   return (
     <div>
@@ -53,7 +58,19 @@ export default async function SettingsPage({
 
         <TabsContent value="general">
           <Card><CardHeader><CardTitle className="text-base">Net Change Period &amp; Alert Thresholds</CardTitle></CardHeader>
-            <CardContent><SystemSettingsForm settings={(systemSettings.data as SystemSetting[]) ?? []} /></CardContent>
+            <CardContent><SystemSettingsForm settings={settingsList} /></CardContent>
+          </Card>
+          <Card className="mt-4"><CardHeader><CardTitle className="text-base">Net Change Period per Site</CardTitle></CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Overrides the farm-wide change periods above for one site. Leave a box blank to use the farm-wide value.
+              </p>
+              <SiteChangePeriodsForm
+                sites={(sites.data as Site[]) ?? []}
+                defaultMainDays={settingInt("net_change_period_days", 60)}
+                defaultGuardDays={settingInt("net_change_period_days_guard", 120)}
+              />
+            </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="permissions">
